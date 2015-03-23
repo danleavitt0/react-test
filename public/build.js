@@ -59,11 +59,23 @@ var Comment = React.createClass({displayName: "Comment",
         React.createElement("h2", {className: "commentAuthor"}, 
           this.props.author
         ), 
-        this.props.children
+        this.props.children, 
+        React.createElement(DeleteButton, {author: this.props.author})
       )
     );
   }
 });
+
+var DeleteButton = React.createClass({displayName: "DeleteButton",
+	handleClick:function(event){
+		io().emit('remove comment', this.props.author);
+	},
+	render: function(){
+		return(
+    	React.createElement("div", {onClick: this.handleClick}, " Delete ")
+		)
+	}
+})
 
 var CommentBox = React.createClass({displayName: "CommentBox",
   getInitialState: function() {
@@ -82,32 +94,20 @@ var CommentBox = React.createClass({displayName: "CommentBox",
     });
   },
   handleCommentSubmit: function(comment) {
-    var comments = this.state.data;
-    var newComments = comments.concat([comment]);
-    this.setState({data: newComments});
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      type:'POST',
-      data: comment,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
+    io().emit('new comment', comment);
   },
   componentDidMount: function() {
-    this.loadCommentsFromServer();
-    setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+  	this.loadCommentsFromServer();
+    io().on('added comment', function(data) {
+    	this.setState({data:data});
+    }.bind(this));
   },
   render: function() {
     return (
       React.createElement("div", {className: "commentBox"}, 
         React.createElement("h1", null, "Comments"), 
         React.createElement(CommentForm, {onCommentSubmit: this.handleCommentSubmit}), 
-        React.createElement(CommentList, {data: this.state.data, pollInterval: 2000})
+        React.createElement(CommentList, {data: this.state.data})
       )
     );
   }

@@ -49,10 +49,22 @@ var Comment = React.createClass({
           {this.props.author}
         </h2>
         {this.props.children}
+        <DeleteButton author={this.props.author} />
       </div>
     );
   }
 });
+
+var DeleteButton = React.createClass({
+	handleClick:function(event){
+		io().emit('remove comment', this.props.author);
+	},
+	render: function(){
+		return(
+    	<div onClick={this.handleClick}> Delete </div>
+		)
+	}
+})
 
 var CommentBox = React.createClass({
   getInitialState: function() {
@@ -71,32 +83,20 @@ var CommentBox = React.createClass({
     });
   },
   handleCommentSubmit: function(comment) {
-    var comments = this.state.data;
-    var newComments = comments.concat([comment]);
-    this.setState({data: newComments});
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      type:'POST',
-      data: comment,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
+    io().emit('new comment', comment);
   },
   componentDidMount: function() {
-    this.loadCommentsFromServer();
-    setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+  	this.loadCommentsFromServer();
+    io().on('added comment', function(data) {
+    	this.setState({data:data});
+    }.bind(this));
   },
   render: function() {
     return (
       <div className="commentBox">
         <h1>Comments</h1>
         <CommentForm onCommentSubmit={this.handleCommentSubmit} />
-        <CommentList data={this.state.data} pollInterval={2000} />
+        <CommentList data={this.state.data} />
       </div>
     );
   }

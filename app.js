@@ -1,11 +1,13 @@
-    var express  = require('express');
-    var http = require('http');
-    var app = express();                              
+    var express = require('express');
+    var app = express();
+    var server = require('http').createServer(app);
+    var io = require('socket.io')(server);
     var morgan = require('morgan');
     var bodyParser = require('body-parser');
     var methodOverride = require('method-override');
     var request = require('request');
     var fs = require('fs');
+    var _ = require('lodash')
 
     // configuration =================
 
@@ -16,18 +18,6 @@
     app.use(bodyParser.json({ type: 'application/vnd.api+json' })); 
     app.use(methodOverride());
 
-    app.post('*', function(req,res){
-      fs.readFile('./lib/' + req.url, function(err, data) {
-        var comments = JSON.parse(data);
-        comments.push(req.body);
-        fs.writeFile('./lib' + req.url, JSON.stringify(comments, null, 4), function(err) {
-          res.setHeader('Content-Type', 'application/json');
-          res.setHeader('Cache-Control', 'no-cache');
-          res.send(JSON.stringify(comments));
-        });
-      });
-    });
-
     app.get('/comments.json', function(req,res){
       res.sendfile('./lib/' + req.url);
     });
@@ -36,12 +26,37 @@
       res.sendfile('./' + req.url);
     });
 
-
     // listen (start app with node server.js) ======================================
     app.set('port', process.env.PORT || 5000);
 
+    io.on('connection', function(socket){
 
-    http.createServer(app).listen(app.get('port'), function(){
-      console.log("Express server listening on port " + app.get('port'));
-      process.send && process.send('listening');
-    });
+      socket.on('new comment', function(comment){
+        fs.readFile('./lib/comments.json', function(err, data) {
+          var comments = JSON.parse(data);
+          comments.push(comment);
+          fs.writeFile('./lib/comments.json', JSON.stringify(comments, null, 4), function(err) {
+            io.emit('added comment', comments);
+          });
+        });
+      })
+
+      socket.on('remove comment', function(author){
+        fs.readFile('./lib/comments.json', function(err, data) {
+          var comments = JSON.parse(data);
+          _.remove(comments, function(el){
+            return el.author === author;
+          })
+          fs.writeFile('./lib/comments.json', JSON.stringify(comments, null, 4), function(err) {
+            io.emit('added comment', comments);
+          });
+        });
+      });
+
+      socket.on('disconnect', function(){
+        console.log('user disconnected');
+      });
+
+    })
+
+    server.listen(app.get('port'));
