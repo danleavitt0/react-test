@@ -41,17 +41,28 @@
         });
       })
 
-      socket.on('remove comment', function(author){
+      socket.on('remove comment', function(idx){
         fs.readFile('./lib/comments.json', function(err, data) {
           var comments = JSON.parse(data);
-          _.remove(comments, function(el){
-            return el.author === author;
-          })
+          _.pullAt(comments, idx);
           fs.writeFile('./lib/comments.json', JSON.stringify(comments, null, 4), function(err) {
             io.emit('added comment', comments);
           });
         });
       });
+
+      socket.on('add like', function(idx){
+        fs.readFile('./lib/comments.json', function(err, data) {
+          var comments = JSON.parse(data);
+          if(comments[idx].likes)
+            comments[idx].likes++;
+          else
+            comments[idx].likes = 1;
+          fs.writeFile('./lib/comments.json', JSON.stringify(comments, null, 4), function(err) {
+            io.emit('added comment', comments);
+          });
+        });
+      })
 
       socket.on('disconnect', function(){
         console.log('user disconnected');

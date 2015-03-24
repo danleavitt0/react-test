@@ -2,11 +2,17 @@ var React = require('react');
 
 var CommentList = React.createClass({
   render: function() {
-    var commentNodes = this.props.data.map(function(comment){
+    var commentNodes = this.props.data.map(function(comment, i){
       return (
-        <Comment author={comment.author}>
-          {comment.text}
-        </Comment>
+        <div className="commentContainer">
+          <Comment author={comment.author}>
+            {comment.text}
+          </Comment>
+          <div className="optionContainer">
+            <LikeButton _id={i} likes={comment.likes}/>
+            <DeleteButton _id={i}/>
+          </div>
+        </div>
       );
     });
       return ( 
@@ -49,7 +55,6 @@ var Comment = React.createClass({
           {this.props.author}
         </h2>
         {this.props.children}
-        <DeleteButton author={this.props.author} />
       </div>
     );
   }
@@ -57,13 +62,31 @@ var Comment = React.createClass({
 
 var DeleteButton = React.createClass({
 	handleClick:function(event){
-		io().emit('remove comment', this.props.author);
+		io().emit('remove comment', this.props._id);
 	},
 	render: function(){
 		return(
-    	<div onClick={this.handleClick}> Delete </div>
+    	<div className="option" onClick={this.handleClick}> Delete </div>
 		)
 	}
+});
+
+var LikeButton = React.createClass({
+  handleClick:function(event){
+    console.log(event);
+    if(event.currentTarget.disbled === true)
+      return
+    else{
+      io().emit('add like', this.props._id);
+      event.currentTarget.disbled = true
+    }
+  },
+  render: function(){
+    var likes = this.props.likes || 0;
+    return (
+      <button className="option" onClick={this.handleClick}> Likes: {likes} </button>
+    )
+  }
 })
 
 var CommentBox = React.createClass({

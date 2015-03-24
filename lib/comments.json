@@ -1,6 +1,17 @@
 [
     {
-        "author": "ff",
-        "text": "ff"
+        "author": "Joe",
+        "text": "That is a pretty cool comment.",
+        "likes": 41
+    },
+    {
+        "author": "Jacob",
+        "text": "I love this website Daniel!",
+        "likes": 10
+    },
+    {
+        "author": "Plup Bigou",
+        "text": "All you have been doing for 4 years is look at this.",
+        "likes": 7
     }
 ]
