@@ -22,6 +22,10 @@
       res.sendfile('./lib/' + req.url);
     });
 
+    app.get('/posts.json', function(req,res){
+      res.sendfile('./lib/' + req.url);
+    });
+
     app.get('*', function(req, res) {
       res.sendfile('./' + req.url);
     });
@@ -31,34 +35,34 @@
 
     io.on('connection', function(socket){
 
-      socket.on('new comment', function(comment){
-        fs.readFile('./lib/comments.json', function(err, data) {
-          var comments = JSON.parse(data);
-          comments.push(comment);
-          fs.writeFile('./lib/comments.json', JSON.stringify(comments, null, 4), function(err) {
+      socket.on('new comment', function(comment, idx){
+        fs.readFile('./lib/posts.json', function(err, data) {
+          var posts = JSON.parse(data);
+          posts[idx].comments.push(comment);
+          fs.writeFile('./lib/posts.json', JSON.stringify(comments, null, 4), function(err) {
             io.emit('added comment', comments);
           });
         });
       })
 
       socket.on('remove comment', function(idx){
-        fs.readFile('./lib/comments.json', function(err, data) {
+        fs.readFile('./lib/posts.json', function(err, data) {
           var comments = JSON.parse(data);
           _.pullAt(comments, idx);
-          fs.writeFile('./lib/comments.json', JSON.stringify(comments, null, 4), function(err) {
+          fs.writeFile('./lib/posts.json', JSON.stringify(comments, null, 4), function(err) {
             io.emit('added comment', comments);
           });
         });
       });
 
       socket.on('add like', function(idx){
-        fs.readFile('./lib/comments.json', function(err, data) {
+        fs.readFile('./lib/posts.json', function(err, data) {
           var comments = JSON.parse(data);
           if(comments[idx].likes)
             comments[idx].likes++;
           else
             comments[idx].likes = 1;
-          fs.writeFile('./lib/comments.json', JSON.stringify(comments, null, 4), function(err) {
+          fs.writeFile('./lib/posts.json', JSON.stringify(comments, null, 4), function(err) {
             io.emit('added comment', comments);
           });
         });
