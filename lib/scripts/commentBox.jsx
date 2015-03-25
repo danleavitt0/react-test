@@ -31,7 +31,7 @@ var CommentForm = React.createClass({
     if (!text || !author) {
       return;
     }
-    this.props.onCommentSubmit({author: author, text: text}, this.props._id);
+    this.props.onCommentSubmit({author: author, text: text});
     React.findDOMNode(this.refs.author).value = '';
     React.findDOMNode(this.refs.text).value = '';
     return;
@@ -73,7 +73,6 @@ var DeleteButton = React.createClass({
 
 var LikeButton = React.createClass({
   handleClick:function(event){
-    console.log(event);
     if(event.currentTarget.disbled === true)
       return
     else{
@@ -93,8 +92,8 @@ module.exports = React.createClass({
   getInitialState: function() {
     return {data: []};
   },
-  handleCommentSubmit: function(comment, _id) {
-    io().emit('new comment', comment, _id);
+  handleCommentSubmit: function(comment) {
+    io().emit('new comment', comment, this.props._id);
   },
   componentDidMount: function() {
     this.setState({data:this.props.data})

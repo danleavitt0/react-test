@@ -35,9 +35,12 @@
 
     io.on('connection', function(socket){
 
-      socket.on('new comment', function(comment, idx){
+      socket.on('new comment', function(comment, id){
         fs.readFile('./lib/posts.json', function(err, data) {
           var posts = JSON.parse(data);
+          var idx = _.findIndex(posts, function(post){
+            return post.id === id;
+          })
           posts[idx].comments.push(comment);
           fs.writeFile('./lib/posts.json', JSON.stringify(comments, null, 4), function(err) {
             io.emit('added comment', comments);

@@ -4,10 +4,10 @@ var CommentBox = require('./commentBox.jsx');
 var PostList = React.createClass({
 	render:function(){
 		var postNodes = this.props.data.map(function(post, i){
+			console.log(post);
 			return (
 				<div className="postContainer">
 					<Post img={post.img} heading={post.header} content={post.content} />
-					<CommentBox data={post.comments} />
 				</div>
 			);
 		});
