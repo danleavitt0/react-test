@@ -4,7 +4,7 @@ var CommentList = React.createClass({
   render: function() {
     var commentNodes = this.props.data.map(function(comment, i){
       return (
-        <div className="commentContainer">
+        <div className="commentContainer" key={i}>
           <Comment author={comment.author}>
             {comment.text}
           </Comment>
@@ -24,8 +24,12 @@ var CommentList = React.createClass({
 });
 
 var CommentForm = React.createClass({
+  componentDidMount:function() {
+    console.log(this, this.handleSubmit, this.props.onCommentSubmit);
+  },
   handleSubmit: function(e) {
     e.preventDefault();
+    console.log(e);
     var author = React.findDOMNode(this.refs.author).value.trim();
     var text = React.findDOMNode(this.refs.text).value.trim();
     if (!text || !author) {
@@ -38,10 +42,10 @@ var CommentForm = React.createClass({
   },
   render: function() {
     return (
-      <form className="commentForm" onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} >
         <input type="text" placeholder="Your name" ref="author" />
         <input type="text" placeholder="Say something..." ref="text" />
-        <input type="submit" value="Post" />
+        <input type="submit" />
       </form>
     );
   }
@@ -88,11 +92,12 @@ var LikeButton = React.createClass({
   }
 })
 
-module.exports = React.createClass({
+var CommentBox = React.createClass({
   getInitialState: function() {
     return {data: []};
   },
   handleCommentSubmit: function(comment) {
+    console.log(comment);
     io().emit('new comment', comment, this.props._id);
   },
   componentDidMount: function() {
@@ -110,3 +115,47 @@ module.exports = React.createClass({
     );
   }
 });
+
+module.exports = CommentBox;
+
+// var Comments = React.createClass({
+//   getInitialState: function() {
+//     return {data: []};
+//   },
+//   handleCommentSubmit: function(comment) {
+//     io().emit('new comment', comment, this.props._id);
+//   },
+//   getDataFromServer: function(){
+//     $.ajax({
+//       url: this.props.url,
+//       dataType: 'json',
+//       success: function(data) {
+//         this.setState({data: data});
+//       }.bind(this),
+//       error: function(xhr, status, err) {
+//         console.error(this.props.url, status, err.toString());
+//       }.bind(this)
+//     });
+//   },
+//   componentDidMount: function() {
+//     this.getDataFromServer();
+//     this.setState({data:this.props.data})
+//     io().on('added comment', function(data) {
+//       this.setState({data:data});
+//     }.bind(this));
+//   },
+//   render: function() {
+//     return (
+//       <div className="commentBox">
+//         <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+//         <CommentList data={this.state.data} />
+//       </div>
+//     );
+//   }
+// });
+
+// function render(){
+//   return <Comments url="comments.json"/>
+// }
+
+// module.exports = render;

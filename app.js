@@ -38,6 +38,7 @@
       socket.on('new comment', function(comment, id){
         fs.readFile('./lib/posts.json', function(err, data) {
           var posts = JSON.parse(data);
+          console.log(posts);
           var idx = _.findIndex(posts, function(post){
             return post.id === id;
           })
