@@ -1,4 +1,5 @@
 var React = require('react');
+var CommentForm = require('./commentForm.jsx');
 
 var CommentList = React.createClass({
   render: function() {
@@ -8,10 +9,6 @@ var CommentList = React.createClass({
           <Comment author={comment.author}>
             {comment.text}
           </Comment>
-          <div className="optionContainer">
-            <LikeButton _id={i} likes={comment.likes}/>
-            <DeleteButton _id={i}/>
-          </div>
         </div>
       );
     });
@@ -20,34 +17,6 @@ var CommentList = React.createClass({
         {commentNodes}
       </div>
     )
-  }
-});
-
-var CommentForm = React.createClass({
-  componentDidMount:function() {
-    console.log(this, this.handleSubmit, this.props.onCommentSubmit);
-  },
-  handleSubmit: function(e) {
-    e.preventDefault();
-    console.log(e);
-    var author = React.findDOMNode(this.refs.author).value.trim();
-    var text = React.findDOMNode(this.refs.text).value.trim();
-    if (!text || !author) {
-      return;
-    }
-    this.props.onCommentSubmit({author: author, text: text});
-    React.findDOMNode(this.refs.author).value = '';
-    React.findDOMNode(this.refs.text).value = '';
-    return;
-  },
-  render: function() {
-    return (
-      <form onSubmit={this.handleSubmit} >
-        <input type="text" placeholder="Your name" ref="author" />
-        <input type="text" placeholder="Say something..." ref="text" />
-        <input type="submit" />
-      </form>
-    );
   }
 });
 

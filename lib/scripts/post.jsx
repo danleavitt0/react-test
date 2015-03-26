@@ -31,6 +31,23 @@ var Post = React.createClass({
 	}
 })
 
+var PostForm = React.createClass({
+	handleSubmit:function(e){
+		e.preventDefault();
+		console.log(e);
+	},
+	render: function(){
+		return (
+			<form onSubmit={this.handleSubmit}>
+				<input type="text"  />
+				<input type="text" />
+				<input type="text"  />
+				<input type="submit" />
+			</form>
+		);
+	}
+})
+
 var PostBox = React.createClass({
 	getInitialState: function() {
 		return {
@@ -55,9 +72,10 @@ var PostBox = React.createClass({
 	render:function(){
 		return (
 			<div className="postBox">
+				<PostForm />
 				<PostList data={this.state.data} />
 			</div>
-		)
+		);
 	}
 })
 
