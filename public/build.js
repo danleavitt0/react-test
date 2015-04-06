@@ -21,7 +21,8 @@ var CommentList = React.createClass({displayName: "CommentList",
         React.createElement("div", {className: "commentContainer", key: i}, 
           React.createElement(Comment, {author: comment.author}, 
             comment.text
-          )
+          ), 
+          React.createElement(LikeButton, {likes: comment.likes, _id: comment._id})
         )
       );
     });
@@ -59,11 +60,12 @@ var DeleteButton = React.createClass({displayName: "DeleteButton",
 
 var LikeButton = React.createClass({displayName: "LikeButton",
   handleClick:function(event){
-    if(event.currentTarget.disbled === true)
+    console.log(event);
+    if(event.currentTarget.disabled === true)
       return
     else{
-      io().emit('add like', this.props._id);
-      event.currentTarget.disbled = true
+      // io().emit('add like', this.props._id);
+      event.currentTarget.disabled = true
     }
   },
   render: function(){

@@ -9,6 +9,7 @@ var CommentList = React.createClass({
           <Comment author={comment.author}>
             {comment.text}
           </Comment>
+          <LikeButton likes={comment.likes} _id={comment._id} />
         </div>
       );
     });
@@ -46,11 +47,12 @@ var DeleteButton = React.createClass({
 
 var LikeButton = React.createClass({
   handleClick:function(event){
-    if(event.currentTarget.disbled === true)
+    console.log(event);
+    if(event.currentTarget.disabled === true)
       return
     else{
-      io().emit('add like', this.props._id);
-      event.currentTarget.disbled = true
+      // io().emit('add like', this.props._id);
+      event.currentTarget.disabled = true
     }
   },
   render: function(){
