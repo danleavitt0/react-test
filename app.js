@@ -35,16 +35,15 @@
 
     io.on('connection', function(socket){
 
-      socket.on('new comment', function(comment, id){
+      socket.on('new comment', function(comment){
         fs.readFile('./lib/posts.json', function(err, data) {
           var posts = JSON.parse(data);
-          console.log(posts);
           var idx = _.findIndex(posts, function(post){
-            return post.id === id;
+            return post._id === comment._id;
           })
-          posts[idx].comments.push(comment);
-          fs.writeFile('./lib/posts.json', JSON.stringify(comments, null, 4), function(err) {
-            io.emit('added comment', comments);
+          posts[idx].comments.push(_.omit(comment, '_id'));
+          fs.writeFile('./lib/posts.json', JSON.stringify(posts, null, 4), function(err) {
+            io.emit('added comment', posts[idx].comments, comment._id);
           });
         });
       })

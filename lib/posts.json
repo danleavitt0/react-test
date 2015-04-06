@@ -24,9 +24,21 @@
                 "author": "blah",
                 "text": "123",
                 "likes": 2
+            },
+            {
+                "author": "aaa",
+                "text": "bbb"
+            },
+            {
+                "author": "aat",
+                "text": "bcc"
+            },
+            {
+                "author": "cc",
+                "text": "ff"
             }
         ],
-        "likes": 1
+        "likes": 3
     },
     {
         "_id": "100000100002",
@@ -38,8 +50,17 @@
                 "author": "Daniel",
                 "text": "Is writing code",
                 "likes": 4
+            },
+            {
+                "author": "23",
+                "text": "14"
+            },
+            {
+                "author": "bb",
+                "text": "23"
             }
-        ]
+        ],
+        "likes": 1
     },
     {
         "_id": "100000100003",
@@ -51,8 +72,12 @@
                 "author": "Steven",
                 "text": "Is a coding animal",
                 "likes": 11
+            },
+            {
+                "author": "Jeff",
+                "text": "Likes to party"
             }
         ],
-        "likes": 1
+        "likes": 2
     }
 ]

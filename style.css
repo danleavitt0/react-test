@@ -27,3 +27,7 @@ button:focus{
 .optionContainer{
 	margin-top:10px;
 }
+
+.postContent {
+	font-size:1.2em;
+}
