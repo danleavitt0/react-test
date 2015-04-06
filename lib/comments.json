@@ -1,22 +1,22 @@
 [
 	{
-        "author": "Joe",
-        "text": "That is a pretty cool comment.",
-        "likes": 41
-    },
-    {
-        "author": "Jacob",
-        "text": "I love this website Daniel!",
-        "likes": 11
-    },
-    {
-        "author": "Joseph",
-        "text": "I love doing my homework!",
-        "likes": 1
-    },
-    {
-        "author": "blah",
-        "text": "123",
-        "likes": 2
-    }
+    "author": "Joe",
+    "text": "That is a pretty cool comment.",
+    "likes": 41
+  },
+  {
+    "author": "Jacob",
+    "text": "I love this website Daniel!",
+    "likes": 11
+  },
+  {
+    "author": "Joseph",
+    "text": "I love doing my homework!",
+    "likes": 1
+  },
+  {
+    "author": "blah",
+    "text": "123",
+    "likes": 2
+  }
 ]

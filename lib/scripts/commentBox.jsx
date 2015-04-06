@@ -2,17 +2,22 @@ var React = require('react');
 var CommentForm = require('./commentForm.jsx');
 
 var CommentList = React.createClass({
+  handleCommentSubmit: function() {
+    io().emit('new comment', comment, this.props.comments._id);
+  },
   render: function() {
-    var commentNodes = this.props.data.map(function(comment, i){
+    var commentNodes = this.props.comments.map(function(comment, i){
       return (
         <div className="commentContainer" key={i}>
           <Comment author={comment.author}>
             {comment.text}
           </Comment>
+          <LikeButton likes={comment.likes} _id={i} />
+          <DeleteButton _id={i} />
         </div>
       );
-    });
-      return ( 
+    }, this);
+    return ( 
       <div className="commentList">
         {commentNodes}
       </div>
@@ -35,7 +40,8 @@ var Comment = React.createClass({
 
 var DeleteButton = React.createClass({
 	handleClick:function(event){
-		io().emit('remove comment', this.props._id);
+    console.log('delete');
+		// io().emit('remove comment', this.props._id);
 	},
 	render: function(){
 		return(
@@ -49,7 +55,8 @@ var LikeButton = React.createClass({
     if(event.currentTarget.disbled === true)
       return
     else{
-      io().emit('add like', this.props._id);
+      console.log(event);
+      // io().emit('add like', this.props._id);
       event.currentTarget.disbled = true
     }
   },
@@ -63,23 +70,18 @@ var LikeButton = React.createClass({
 
 var CommentBox = React.createClass({
   getInitialState: function() {
-    return {data: []};
-  },
-  handleCommentSubmit: function(comment) {
-    console.log(comment);
-    io().emit('new comment', comment, this.props._id);
+    return {comments: []};
   },
   componentDidMount: function() {
-    this.setState({data:this.props.data})
+    this.setState({comments:this.props.comments})
     io().on('added comment', function(data) {
-    	this.setState({data:data});
+    	this.setState({comments:data});
     }.bind(this));
   },
   render: function() {
     return (
       <div className="commentBox">
-        <CommentForm onCommentSubmit={this.handleCommentSubmit} />
-        <CommentList data={this.state.data} />
+        <CommentList comments={this.state.comments} />
       </div>
     );
   }
@@ -89,7 +91,9 @@ module.exports = CommentBox;
 
 // var Comments = React.createClass({
 //   getInitialState: function() {
-//     return {data: []};
+//     return {
+//       data: []
+//     };
 //   },
 //   handleCommentSubmit: function(comment) {
 //     io().emit('new comment', comment, this.props._id);
@@ -108,7 +112,7 @@ module.exports = CommentBox;
 //   },
 //   componentDidMount: function() {
 //     this.getDataFromServer();
-//     this.setState({data:this.props.data})
+//     // this.setState({data:this.props.data})
 //     io().on('added comment', function(data) {
 //       this.setState({data:data});
 //     }.bind(this));
@@ -116,15 +120,14 @@ module.exports = CommentBox;
 //   render: function() {
 //     return (
 //       <div className="commentBox">
-//         <CommentForm onCommentSubmit={this.handleCommentSubmit} />
-//         <CommentList data={this.state.data} />
+//         <CommentList comments={this.state.data} />
 //       </div>
 //     );
 //   }
 // });
 
 // function render(){
-//   return <Comments url="comments.json"/>
+//   return <Comments url="comments.json" />
 // }
 
 // module.exports = render;

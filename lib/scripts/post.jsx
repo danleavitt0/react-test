@@ -1,16 +1,23 @@
 var React = require('React');
 var CommentBox = require('./commentBox.jsx');
+var CommentForm = require('./commentForm.jsx');
+var _ = require('lodash');
 
 var PostList = React.createClass({
+	handleSubmit: function() {
+		console.log('handle click');
+	},
 	render:function(){
-		var postNodes = this.props.data.map(function(post, i){
+		console.log(this.props.posts);
+		var postNodes = _.map(this.props.posts, function(post, i){
 			return (
-				<div className="postContainer" key={post._id}>
+				<div className="postContainer" key={i}>
 					<Post img={post.img} heading={post.header} content={post.content} />
-					<CommentBox data={post.comments} _id={post._id}/>
+					<CommentForm />
+					<CommentBox comments={post.comments} />
 				</div>
 			);
-		});
+		}, this);
 		return (
 			<div className="postList">
 				{postNodes}
@@ -23,7 +30,6 @@ var Post = React.createClass({
 	render:function(){
 		return(
 			<div className="post">
-				<div>{this.props.img}</div>
 				<h2 className="postHeading">{this.props.heading}</h2>
 				<div className="postContent">{this.props.content}</div>
 			</div>
@@ -51,18 +57,21 @@ var PostForm = React.createClass({
 var PostBox = React.createClass({
 	getInitialState: function() {
 		return {
-			data:[] 
+			posts:[] 
 		};
 	},
 	componentDidMount: function() {
 		this.loadPostsFromServer();
+    io().on('added comment', function(data) {
+      this.setState({posts:data});
+    }.bind(this));
 	},
 	loadPostsFromServer: function() {
 		$.ajax({
       url: this.props.url,
       dataType: 'json',
       success: function(data) {
-        this.setState({data: data});
+        this.setState({posts: data});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -72,8 +81,7 @@ var PostBox = React.createClass({
 	render:function(){
 		return (
 			<div className="postBox">
-				<PostForm />
-				<PostList data={this.state.data} />
+				<PostList posts={this.state.posts} />
 			</div>
 		);
 	}

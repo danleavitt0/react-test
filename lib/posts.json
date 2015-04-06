@@ -1,58 +1,59 @@
 [
-    {
-        "_id": "100000100001",
-        "img": "img1.png",
-        "header": "First Post",
-        "content": "Writing a whole lot of content",
-        "comments": [
-            {
-                "author": "Joe",
-                "text": "That is a pretty cool comment.",
-                "likes": 41
-            },
-            {
-                "author": "Jacob",
-                "text": "I love this website Daniel!",
-                "likes": 11
-            },
-            {
-                "author": "Joseph",
-                "text": "I love doing my homework!",
-                "likes": 1
-            },
-            {
-                "author": "blah",
-                "text": "123",
-                "likes": 2
-            }
-        ],
+  {
+    "_id": "100000100001",
+    "img": "img1.png",
+    "header": "First Post",
+    "content": "Writing a whole lot of content",
+    "comments": [
+      {
+        "author": "Joe",
+        "text": "That is a pretty cool comment.",
+        "likes": 41
+      },
+      {
+        "author": "Jacob",
+        "text": "I love this website Daniel!",
+        "likes": 11
+      },
+      {
+        "author": "Joseph",
+        "text": "I love doing my homework!",
         "likes": 1
-    },
-    {
-        "_id": "100000100002",
-        "img": "img2.png",
-        "header": "Second Post",
-        "content": "Writing a whole lot of content",
-        "comments": [
-            {
-                "author": "Daniel",
-                "text": "Is writing code",
-                "likes": 4
-            }
-        ]
-    },
-    {
-        "_id": "100000100003",
-        "img": "img3.png",
-        "header": "Third Post",
-        "content": "Writing a whole lot of content",
-        "comments": [
-            {
-                "author": "Steven",
-                "text": "Is a coding animal",
-                "likes": 11
-            }
-        ],
-        "likes": 1
-    }
+      },
+      {
+        "author": "blah",
+        "text": "123",
+        "likes": 2
+      }
+    ],
+    "likes": 3
+  },
+  {
+    "_id": "100000100002",
+    "img": "img2.png",
+    "header": "Second Post",
+    "content": "Writing a whole lot of content",
+    "comments": [
+      {
+        "author": "Daniel",
+        "text": "Is writing code",
+        "likes": 4
+      }
+    ],
+    "likes": 1
+  },
+  {
+    "_id": "100000100003",
+    "img": "img3.png",
+    "header": "Third Post",
+    "content": "Writing a whole lot of content",
+    "comments": [
+      {
+        "author": "Steven",
+        "text": "Is a coding animal",
+        "likes": 11
+      }
+    ],
+    "likes": 2
+  }
 ]
