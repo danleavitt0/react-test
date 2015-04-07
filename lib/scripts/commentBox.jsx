@@ -2,9 +2,6 @@ var React = require('react');
 var _ = require('lodash');
 
 var CommentList = React.createClass({
-  handleCommentSubmit: function() {
-    io().emit('new comment', comment, this.props.comments._id);
-  },
   render: function() {
     var commentNodes = _.map(this.props.comments, function(comment, i){
       return (
@@ -13,7 +10,7 @@ var CommentList = React.createClass({
             {comment.text}
           </Comment>
           <LikeButton likes={comment.likes} _id={i} />
-          <DeleteButton _id={i} />
+          <DeleteButton idx={i} _id={this.props._id} />
         </div>
       );
     }, this);
@@ -40,8 +37,8 @@ var Comment = React.createClass({
 
 var DeleteButton = React.createClass({
 	handleClick:function(event){
-    console.log('delete');
-		// io().emit('remove comment', this.props._id);
+    // console.log(this.props)
+		io().emit('remove comment', this.props.idx, this.props._id);
 	},
 	render: function(){
 		return(
@@ -81,7 +78,7 @@ var CommentBox = React.createClass({
   render: function() {
     return (
       <div className="commentBox">
-        <CommentList comments={this.state.comments} />
+        <CommentList comments={this.state.comments} _id={this.props._id} />
       </div>
     );
   }

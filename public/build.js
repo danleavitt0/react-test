@@ -9,14 +9,11 @@ $(document).ready(function(){
 	React.render(comment(), document.getElementById('container'));
 }) 
 
-},{"./scripts/commentForm.jsx":"/Users/9dots/Repositories/react-test/lib/scripts/commentForm.jsx","./scripts/post.jsx":"/Users/9dots/Repositories/react-test/lib/scripts/post.jsx","react":"/Users/9dots/Repositories/react-test/node_modules/react/react.js"}],"/Users/9dots/Repositories/react-test/lib/scripts/commentBox.jsx":[function(require,module,exports){
+},{"./scripts/commentForm.jsx":"/Users/danielleavitt/Repositories/react-test/lib/scripts/commentForm.jsx","./scripts/post.jsx":"/Users/danielleavitt/Repositories/react-test/lib/scripts/post.jsx","react":"/Users/danielleavitt/Repositories/react-test/node_modules/react/react.js"}],"/Users/danielleavitt/Repositories/react-test/lib/scripts/commentBox.jsx":[function(require,module,exports){
 var React = require('react');
 var _ = require('lodash');
 
 var CommentList = React.createClass({displayName: "CommentList",
-  handleCommentSubmit: function() {
-    io().emit('new comment', comment, this.props.comments._id);
-  },
   render: function() {
     var commentNodes = _.map(this.props.comments, function(comment, i){
       return (
@@ -25,7 +22,7 @@ var CommentList = React.createClass({displayName: "CommentList",
             comment.text
           ), 
           React.createElement(LikeButton, {likes: comment.likes, _id: i}), 
-          React.createElement(DeleteButton, {_id: i})
+          React.createElement(DeleteButton, {idx: i, _id: this.props._id})
         )
       );
     }, this);
@@ -52,8 +49,8 @@ var Comment = React.createClass({displayName: "Comment",
 
 var DeleteButton = React.createClass({displayName: "DeleteButton",
 	handleClick:function(event){
-    console.log('delete');
-		// io().emit('remove comment', this.props._id);
+    // console.log(this.props)
+		io().emit('remove comment', this.props.idx, this.props._id);
 	},
 	render: function(){
 		return(
@@ -93,7 +90,7 @@ var CommentBox = React.createClass({displayName: "CommentBox",
   render: function() {
     return (
       React.createElement("div", {className: "commentBox"}, 
-        React.createElement(CommentList, {comments: this.state.comments})
+        React.createElement(CommentList, {comments: this.state.comments, _id: this.props._id})
       )
     );
   }
@@ -101,7 +98,7 @@ var CommentBox = React.createClass({displayName: "CommentBox",
 
 module.exports = CommentBox;
 
-},{"lodash":"/Users/9dots/Repositories/react-test/node_modules/lodash/index.js","react":"/Users/9dots/Repositories/react-test/node_modules/react/react.js"}],"/Users/9dots/Repositories/react-test/lib/scripts/commentForm.jsx":[function(require,module,exports){
+},{"lodash":"/Users/danielleavitt/Repositories/react-test/node_modules/lodash/index.js","react":"/Users/danielleavitt/Repositories/react-test/node_modules/react/react.js"}],"/Users/danielleavitt/Repositories/react-test/lib/scripts/commentForm.jsx":[function(require,module,exports){
 var React = require('react');
 
 var CommentForm = React.createClass({displayName: "CommentForm",
@@ -134,7 +131,7 @@ var CommentForm = React.createClass({displayName: "CommentForm",
 
 module.exports = CommentForm;
 
-},{"react":"/Users/9dots/Repositories/react-test/node_modules/react/react.js"}],"/Users/9dots/Repositories/react-test/lib/scripts/post.jsx":[function(require,module,exports){
+},{"react":"/Users/danielleavitt/Repositories/react-test/node_modules/react/react.js"}],"/Users/danielleavitt/Repositories/react-test/lib/scripts/post.jsx":[function(require,module,exports){
 var React = require('react');
 var CommentForm = require('./commentForm.jsx');
 var CommentBox = require('./commentBox.jsx')
@@ -209,7 +206,7 @@ function render(){
 
 module.exports = render;
 
-},{"./commentBox.jsx":"/Users/9dots/Repositories/react-test/lib/scripts/commentBox.jsx","./commentForm.jsx":"/Users/9dots/Repositories/react-test/lib/scripts/commentForm.jsx","lodash":"/Users/9dots/Repositories/react-test/node_modules/lodash/index.js","react":"/Users/9dots/Repositories/react-test/node_modules/react/react.js"}],"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
+},{"./commentBox.jsx":"/Users/danielleavitt/Repositories/react-test/lib/scripts/commentBox.jsx","./commentForm.jsx":"/Users/danielleavitt/Repositories/react-test/lib/scripts/commentForm.jsx","lodash":"/Users/danielleavitt/Repositories/react-test/node_modules/lodash/index.js","react":"/Users/danielleavitt/Repositories/react-test/node_modules/react/react.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -269,11 +266,11 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/lodash/index.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/lodash/index.js":[function(require,module,exports){
 (function (global){
 /**
  * @license
- * lodash 3.5.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.6.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -d -o ./index.js`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -286,7 +283,7 @@ process.umask = function() { return 0; };
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '3.5.0';
+  var VERSION = '3.6.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -296,8 +293,8 @@ process.umask = function() { return 0; };
       CURRY_RIGHT_FLAG = 16,
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64,
-      REARG_FLAG = 128,
-      ARY_FLAG = 256;
+      ARY_FLAG = 128,
+      REARG_FLAG = 256;
 
   /** Used as default options for `_.trunc`. */
   var DEFAULT_TRUNC_LENGTH = 30,
@@ -361,17 +358,17 @@ process.umask = function() { return 0; };
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /**
-   * Used to match ES template delimiters.
-   * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
-   * for more details.
+   * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
+   */
+  var reComboMarks = /[\u0300-\u036f\ufe20-\ufe23]/g;
+
+  /**
+   * Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components).
    */
   var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
   /** Used to match `RegExp` flags from their coerced string values. */
   var reFlags = /\w*$/;
-
-  /** Used to detect named functions. */
-  var reFuncName = /^\s*function[ \n\r\t]+\w/;
 
   /** Used to detect hexadecimal string values. */
   var reHexPrefix = /^0[xX]/;
@@ -386,15 +383,12 @@ process.umask = function() { return 0; };
   var reNoMatch = /($^)/;
 
   /**
-   * Used to match `RegExp` special characters.
-   * See this [article on `RegExp` characters](http://www.regular-expressions.info/characters.html#special)
-   * for more details.
+   * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
+   * In addition to special characters the forward slash is escaped to allow for
+   * easier `eval` use and `Function` compilation.
    */
   var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
       reHasRegExpChars = RegExp(reRegExpChars.source);
-
-  /** Used to detect functions containing a `this` reference. */
-  var reThis = /\bthis\b/;
 
   /** Used to match unescaped characters in compiled string literals. */
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
@@ -426,7 +420,7 @@ process.umask = function() { return 0; };
     'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document',
     'isFinite', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
     'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
-    'window', 'WinRTError'
+    'window'
   ];
 
   /** Used to make template sourceURLs easier to identify. */
@@ -535,8 +529,11 @@ process.umask = function() { return 0; };
   /** Detect free variable `global` from Node.js. */
   var freeGlobal = freeExports && freeModule && typeof global == 'object' && global;
 
+  /** Detect free variable `self`. */
+  var freeSelf = objectTypes[typeof self] && self && self.Object && self;
+
   /** Detect free variable `window`. */
-  var freeWindow = objectTypes[typeof window] && window;
+  var freeWindow = objectTypes[typeof window] && window && window.Object && window;
 
   /** Detect the popular CommonJS extension `module.exports`. */
   var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
@@ -547,7 +544,7 @@ process.umask = function() { return 0; };
    * The `this` value is used if it is the global object to avoid Greasemonkey's
    * restricted `window` object, otherwise the `window` object is used.
    */
-  var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || this;
+  var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || freeSelf || this;
 
   /*--------------------------------------------------------------------------*/
 
@@ -573,6 +570,28 @@ process.umask = function() { return 0; };
       }
     }
     return 0;
+  }
+
+  /**
+   * The base implementation of `_.findIndex` and `_.findLastIndex` without
+   * support for callback shorthands and `this` binding.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {Function} predicate The function invoked per iteration.
+   * @param {boolean} [fromRight] Specify iterating from right to left.
+   * @returns {number} Returns the index of the matched value, else `-1`.
+   */
+  function baseFindIndex(array, predicate, fromRight) {
+    var length = array.length,
+        index = fromRight ? length : -1;
+
+    while ((fromRight ? index-- : ++index < length)) {
+      if (predicate(array[index], index, array)) {
+        return index;
+      }
+    }
+    return -1;
   }
 
   /**
@@ -761,7 +780,6 @@ process.umask = function() { return 0; };
 
   /**
    * Gets the index at which the first occurrence of `NaN` is found in `array`.
-   * If `fromRight` is provided elements of `array` are iterated from right to left.
    *
    * @private
    * @param {Array} array The array to search.
@@ -790,7 +808,7 @@ process.umask = function() { return 0; };
    * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
    */
   function isObjectLike(value) {
-    return (value && typeof value == 'object') || false;
+    return !!value && typeof value == 'object';
   }
 
   /**
@@ -912,19 +930,19 @@ process.umask = function() { return 0; };
    * @returns {Function} Returns a new `lodash` function.
    * @example
    *
-   * _.mixin({ 'add': function(a, b) { return a + b; } });
+   * _.mixin({ 'foo': _.constant('foo') });
    *
    * var lodash = _.runInContext();
-   * lodash.mixin({ 'sub': function(a, b) { return a - b; } });
+   * lodash.mixin({ 'bar': lodash.constant('bar') });
    *
-   * _.isFunction(_.add);
+   * _.isFunction(_.foo);
    * // => true
-   * _.isFunction(_.sub);
+   * _.isFunction(_.bar);
    * // => false
    *
-   * lodash.isFunction(lodash.add);
+   * lodash.isFunction(lodash.foo);
    * // => false
-   * lodash.isFunction(lodash.sub);
+   * lodash.isFunction(lodash.bar);
    * // => true
    *
    * // using `context` to mock `Date#getTime` use in `_.now`
@@ -977,9 +995,8 @@ process.umask = function() { return 0; };
     var idCounter = 0;
 
     /**
-     * Used to resolve the `toStringTag` of values.
-     * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-     * for more details.
+     * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+     * of values.
      */
     var objToString = objectProto.toString;
 
@@ -1044,14 +1061,16 @@ process.umask = function() { return 0; };
     var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
 
     /**
-     * Used as the maximum length of an array-like value.
-     * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
-     * for more details.
+     * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+     * of an array-like value.
      */
     var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
+
+    /** Used to lookup unminified function names. */
+    var realNames = {};
 
     /*------------------------------------------------------------------------*/
 
@@ -1202,7 +1221,7 @@ process.umask = function() { return 0; };
        * @memberOf _.support
        * @type boolean
        */
-      support.funcDecomp = !isNative(context.WinRTError) && reThis.test(runInContext);
+      support.funcDecomp = /\bthis\b/.test(function() { return this; });
 
       /**
        * Detect if `Function#name` is supported (all but IE).
@@ -1578,7 +1597,7 @@ process.umask = function() { return 0; };
 
     /**
      * A specialized version of `_.forEach` for arrays without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1599,7 +1618,7 @@ process.umask = function() { return 0; };
 
     /**
      * A specialized version of `_.forEachRight` for arrays without support for
-     * callback shorthands or `this` binding.
+     * callback shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1619,7 +1638,7 @@ process.umask = function() { return 0; };
 
     /**
      * A specialized version of `_.every` for arrays without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1641,7 +1660,7 @@ process.umask = function() { return 0; };
 
     /**
      * A specialized version of `_.filter` for arrays without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1665,7 +1684,7 @@ process.umask = function() { return 0; };
 
     /**
      * A specialized version of `_.map` for arrays without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1727,7 +1746,7 @@ process.umask = function() { return 0; };
 
     /**
      * A specialized version of `_.reduce` for arrays without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1752,7 +1771,7 @@ process.umask = function() { return 0; };
 
     /**
      * A specialized version of `_.reduceRight` for arrays without support for
-     * callback shorthands or `this` binding.
+     * callback shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1775,7 +1794,7 @@ process.umask = function() { return 0; };
 
     /**
      * A specialized version of `_.some` for arrays without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array} array The array to iterate over.
@@ -1793,6 +1812,23 @@ process.umask = function() { return 0; };
         }
       }
       return false;
+    }
+
+    /**
+     * A specialized version of `_.sum` for arrays without support for iteratees.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @returns {number} Returns the sum.
+     */
+    function arraySum(array) {
+      var length = array.length,
+          result = 0;
+
+      while (length--) {
+        result += +array[length] || 0;
+      }
+      return result;
     }
 
     /**
@@ -1910,26 +1946,6 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * The base implementation of `_.bindAll` without support for individual
-     * method name arguments.
-     *
-     * @private
-     * @param {Object} object The object to bind and assign the bound methods to.
-     * @param {string[]} methodNames The object method names to bind.
-     * @returns {Object} Returns `object`.
-     */
-    function baseBindAll(object, methodNames) {
-      var index = -1,
-          length = methodNames.length;
-
-      while (++index < length) {
-        var key = methodNames[index];
-        object[key] = createWrapper(object[key], BIND_FLAG, object);
-      }
-      return object;
-    }
-
-    /**
      * The base implementation of `_.callback` which supports specifying the
      * number of arguments to provide to `func`.
      *
@@ -1942,9 +1958,9 @@ process.umask = function() { return 0; };
     function baseCallback(func, thisArg, argCount) {
       var type = typeof func;
       if (type == 'function') {
-        return (typeof thisArg != 'undefined' && isBindable(func))
-          ? bindCallback(func, thisArg, argCount)
-          : func;
+        return typeof thisArg == 'undefined'
+          ? func
+          : bindCallback(func, thisArg, argCount);
       }
       if (func == null) {
         return identity;
@@ -2051,14 +2067,14 @@ process.umask = function() { return 0; };
      * @private
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay invocation.
-     * @param {Object} args The `arguments` object to slice and provide to `func`.
+     * @param {Object} args The arguments provide to `func`.
      * @returns {number} Returns the timer id.
      */
-    function baseDelay(func, wait, args, fromIndex) {
+    function baseDelay(func, wait, args) {
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      return setTimeout(function() { func.apply(undefined, baseSlice(args, fromIndex)); }, wait);
+      return setTimeout(function() { func.apply(undefined, args); }, wait);
     }
 
     /**
@@ -2117,21 +2133,7 @@ process.umask = function() { return 0; };
      * @param {Function} iteratee The function invoked per iteration.
      * @returns {Array|Object|string} Returns `collection`.
      */
-    function baseEach(collection, iteratee) {
-      var length = collection ? collection.length : 0;
-      if (!isLength(length)) {
-        return baseForOwn(collection, iteratee);
-      }
-      var index = -1,
-          iterable = toObject(collection);
-
-      while (++index < length) {
-        if (iteratee(iterable[index], index, iterable) === false) {
-          break;
-        }
-      }
-      return collection;
-    }
+    var baseEach = createBaseEach(baseForOwn);
 
     /**
      * The base implementation of `_.forEachRight` without support for callback
@@ -2142,23 +2144,11 @@ process.umask = function() { return 0; };
      * @param {Function} iteratee The function invoked per iteration.
      * @returns {Array|Object|string} Returns `collection`.
      */
-    function baseEachRight(collection, iteratee) {
-      var length = collection ? collection.length : 0;
-      if (!isLength(length)) {
-        return baseForOwnRight(collection, iteratee);
-      }
-      var iterable = toObject(collection);
-      while (length--) {
-        if (iteratee(iterable[length], length, iterable) === false) {
-          break;
-        }
-      }
-      return collection;
-    }
+    var baseEachRight = createBaseEach(baseForOwnRight, true);
 
     /**
      * The base implementation of `_.every` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2207,7 +2197,7 @@ process.umask = function() { return 0; };
 
     /**
      * The base implementation of `_.filter` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2256,11 +2246,10 @@ process.umask = function() { return 0; };
      * @param {Array} array The array to flatten.
      * @param {boolean} isDeep Specify a deep flatten.
      * @param {boolean} isStrict Restrict flattening to arrays and `arguments` objects.
-     * @param {number} fromIndex The index to start from.
      * @returns {Array} Returns the new flattened array.
      */
-    function baseFlatten(array, isDeep, isStrict, fromIndex) {
-      var index = fromIndex - 1,
+    function baseFlatten(array, isDeep, isStrict) {
+      var index = -1,
           length = array.length,
           resIndex = -1,
           result = [];
@@ -2271,7 +2260,7 @@ process.umask = function() { return 0; };
         if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
-            value = baseFlatten(value, isDeep, isStrict, 0);
+            value = baseFlatten(value, isDeep, isStrict);
           }
           var valIndex = -1,
               valLength = value.length;
@@ -2299,20 +2288,7 @@ process.umask = function() { return 0; };
      * @param {Function} keysFunc The function to get the keys of `object`.
      * @returns {Object} Returns `object`.
      */
-    function baseFor(object, iteratee, keysFunc) {
-      var index = -1,
-          iterable = toObject(object),
-          props = keysFunc(object),
-          length = props.length;
-
-      while (++index < length) {
-        var key = props[index];
-        if (iteratee(iterable[key], key, iterable) === false) {
-          break;
-        }
-      }
-      return object;
-    }
+    var baseFor = createBaseFor();
 
     /**
      * This function is like `baseFor` except that it iterates over properties
@@ -2324,19 +2300,7 @@ process.umask = function() { return 0; };
      * @param {Function} keysFunc The function to get the keys of `object`.
      * @returns {Object} Returns `object`.
      */
-    function baseForRight(object, iteratee, keysFunc) {
-      var iterable = toObject(object),
-          props = keysFunc(object),
-          length = props.length;
-
-      while (length--) {
-        var key = props[length];
-        if (iteratee(iterable[key], key, iterable) === false) {
-          break;
-        }
-      }
-      return object;
-    }
+    var baseForRight = createBaseFor(true);
 
     /**
      * The base implementation of `_.forIn` without support for callback
@@ -2402,30 +2366,6 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * The base implementation of `_.invoke` which requires additional arguments
-     * to be provided as an array of arguments rather than individually.
-     *
-     * @private
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|string} methodName The name of the method to invoke or
-     *  the function invoked per iteration.
-     * @param {Array} [args] The arguments to invoke the method with.
-     * @returns {Array} Returns the array of results.
-     */
-    function baseInvoke(collection, methodName, args) {
-      var index = -1,
-          isFunc = typeof methodName == 'function',
-          length = collection ? collection.length : 0,
-          result = isLength(length) ? Array(length) : [];
-
-      baseEach(collection, function(value) {
-        var func = isFunc ? methodName : (value != null && value[methodName]);
-        result[++index] = func ? func.apply(value, args) : undefined;
-      });
-      return result;
-    }
-
-    /**
      * The base implementation of `_.isEqual` without support for `this` binding
      * `customizer` functions.
      *
@@ -2433,12 +2373,12 @@ process.umask = function() { return 0; };
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
      * @param {Function} [customizer] The function to customize comparing values.
-     * @param {boolean} [isWhere] Specify performing partial comparisons.
+     * @param {boolean} [isLoose] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
-    function baseIsEqual(value, other, customizer, isWhere, stackA, stackB) {
+    function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
       // Exit early for identical values.
       if (value === other) {
         // Treat `+0` vs. `-0` as not equal.
@@ -2453,7 +2393,7 @@ process.umask = function() { return 0; };
         // Return `false` unless both values are `NaN`.
         return value !== value && other !== other;
       }
-      return baseIsEqualDeep(value, other, baseIsEqual, customizer, isWhere, stackA, stackB);
+      return baseIsEqualDeep(value, other, baseIsEqual, customizer, isLoose, stackA, stackB);
     }
 
     /**
@@ -2466,12 +2406,12 @@ process.umask = function() { return 0; };
      * @param {Object} other The other object to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparing objects.
-     * @param {boolean} [isWhere] Specify performing partial comparisons.
+     * @param {boolean} [isLoose] Specify performing partial comparisons.
      * @param {Array} [stackA=[]] Tracks traversed `value` objects.
      * @param {Array} [stackB=[]] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function baseIsEqualDeep(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
+    function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
       var objIsArr = isArray(object),
           othIsArr = isArray(other),
           objTag = arrayTag,
@@ -2493,21 +2433,27 @@ process.umask = function() { return 0; };
           othIsArr = isTypedArray(other);
         }
       }
-      var objIsObj = objTag == objectTag,
-          othIsObj = othTag == objectTag,
+      var objIsObj = (objTag == objectTag || (isLoose && objTag == funcTag)),
+          othIsObj = (othTag == objectTag || (isLoose && othTag == funcTag)),
           isSameTag = objTag == othTag;
 
       if (isSameTag && !(objIsArr || objIsObj)) {
         return equalByTag(object, other, objTag);
       }
-      var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
-          othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+      if (isLoose) {
+        if (!isSameTag && !(objIsObj && othIsObj)) {
+          return false;
+        }
+      } else {
+        var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+            othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
-      if (valWrapped || othWrapped) {
-        return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
-      }
-      if (!isSameTag) {
-        return false;
+        if (valWrapped || othWrapped) {
+          return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isLoose, stackA, stackB);
+        }
+        if (!isSameTag) {
+          return false;
+        }
       }
       // Assume cyclic values are equal.
       // For more information on detecting circular references see https://es5.github.io/#JO.
@@ -2524,7 +2470,7 @@ process.umask = function() { return 0; };
       stackA.push(object);
       stackB.push(other);
 
-      var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isWhere, stackA, stackB);
+      var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isLoose, stackA, stackB);
 
       stackA.pop();
       stackB.pop();
@@ -2534,7 +2480,7 @@ process.umask = function() { return 0; };
 
     /**
      * The base implementation of `_.isMatch` without support for callback
-     * shorthands or `this` binding.
+     * shorthands and `this` binding.
      *
      * @private
      * @param {Object} object The object to inspect.
@@ -2545,30 +2491,27 @@ process.umask = function() { return 0; };
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
      */
     function baseIsMatch(object, props, values, strictCompareFlags, customizer) {
-      var length = props.length;
-      if (object == null) {
-        return !length;
-      }
       var index = -1,
+          length = props.length,
           noCustomizer = !customizer;
 
       while (++index < length) {
         if ((noCustomizer && strictCompareFlags[index])
               ? values[index] !== object[props[index]]
-              : !hasOwnProperty.call(object, props[index])
+              : !(props[index] in object)
             ) {
           return false;
         }
       }
       index = -1;
       while (++index < length) {
-        var key = props[index];
-        if (noCustomizer && strictCompareFlags[index]) {
-          var result = hasOwnProperty.call(object, key);
-        } else {
-          var objValue = object[key],
-              srcValue = values[index];
+        var key = props[index],
+            objValue = object[key],
+            srcValue = values[index];
 
+        if (noCustomizer && strictCompareFlags[index]) {
+          var result = typeof objValue != 'undefined' || (key in object);
+        } else {
           result = customizer ? customizer(objValue, srcValue, key) : undefined;
           if (typeof result == 'undefined') {
             result = baseIsEqual(srcValue, objValue, customizer, true);
@@ -2583,7 +2526,7 @@ process.umask = function() { return 0; };
 
     /**
      * The base implementation of `_.map` without support for callback shorthands
-     * or `this` binding.
+     * and `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2609,13 +2552,17 @@ process.umask = function() { return 0; };
       var props = keys(source),
           length = props.length;
 
+      if (!length) {
+        return constant(true);
+      }
       if (length == 1) {
         var key = props[0],
             value = source[key];
 
         if (isStrictComparable(value)) {
           return function(object) {
-            return object != null && object[key] === value && hasOwnProperty.call(object, key);
+            return object != null && object[key] === value &&
+              (typeof value != 'undefined' || (key in toObject(object)));
           };
         }
       }
@@ -2628,7 +2575,7 @@ process.umask = function() { return 0; };
         strictCompareFlags[length] = isStrictComparable(value);
       }
       return function(object) {
-        return baseIsMatch(object, props, values, strictCompareFlags);
+        return object != null && baseIsMatch(toObject(object), props, values, strictCompareFlags);
       };
     }
 
@@ -2644,7 +2591,8 @@ process.umask = function() { return 0; };
     function baseMatchesProperty(key, value) {
       if (isStrictComparable(value)) {
         return function(object) {
-          return object != null && object[key] === value;
+          return object != null && object[key] === value &&
+            (typeof value != 'undefined' || (key in toObject(object)));
         };
       }
       return function(object) {
@@ -2724,7 +2672,7 @@ process.umask = function() { return 0; };
         if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
           result = isArray(value)
             ? value
-            : (value ? arrayCopy(value) : []);
+            : ((value && value.length) ? arrayCopy(value) : []);
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           result = isArguments(value)
@@ -2762,30 +2710,6 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * The base implementation of `_.pullAt` without support for individual
-     * index arguments.
-     *
-     * @private
-     * @param {Array} array The array to modify.
-     * @param {number[]} indexes The indexes of elements to remove.
-     * @returns {Array} Returns the new array of removed elements.
-     */
-    function basePullAt(array, indexes) {
-      var length = indexes.length,
-          result = baseAt(array, indexes);
-
-      indexes.sort(baseCompareAscending);
-      while (length--) {
-        var index = parseFloat(indexes[length]);
-        if (index != previous && isIndex(index)) {
-          var previous = index;
-          splice.call(array, index, 1);
-        }
-      }
-      return result;
-    }
-
-    /**
      * The base implementation of `_.random` without support for argument juggling
      * and returning floating-point numbers.
      *
@@ -2800,7 +2724,7 @@ process.umask = function() { return 0; };
 
     /**
      * The base implementation of `_.reduce` and `_.reduceRight` without support
-     * for callback shorthands or `this` binding, which iterates over `collection`
+     * for callback shorthands and `this` binding, which iterates over `collection`
      * using the provided `eachFunc`.
      *
      * @private
@@ -2867,7 +2791,7 @@ process.umask = function() { return 0; };
 
     /**
      * The base implementation of `_.some` without support for callback shorthands
-     * or `this` binding.
+     * and `this` binding.
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -2932,6 +2856,23 @@ process.umask = function() { return 0; };
       return baseSortBy(result, function(object, other) {
         return compareMultiple(object, other, orders);
       });
+    }
+
+    /**
+     * The base implementation of `_.sum` without support for callback shorthands
+     * and `this` binding.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function} iteratee The function invoked per iteration.
+     * @returns {number} Returns the sum.
+     */
+    function baseSum(collection, iteratee) {
+      var result = 0;
+      baseEach(collection, function(value, index, collection) {
+        result += +iteratee(value, index, collection) || 0;
+      });
+      return result;
     }
 
     /**
@@ -3008,6 +2949,27 @@ process.umask = function() { return 0; };
     }
 
     /**
+     * The base implementation of `_.dropRightWhile`, `_.dropWhile`, `_.takeRightWhile`,
+     * and `_.takeWhile` without support for callback shorthands and `this` binding.
+     *
+     * @private
+     * @param {Array} array The array to query.
+     * @param {Function} predicate The function invoked per iteration.
+     * @param {boolean} [isDrop] Specify dropping elements instead of taking them.
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Array} Returns the slice of `array`.
+     */
+    function baseWhile(array, predicate, isDrop, fromRight) {
+      var length = array.length,
+          index = fromRight ? length : -1;
+
+      while ((fromRight ? index-- : ++index < length) && predicate(array[index], index, array)) {}
+      return isDrop
+        ? baseSlice(array, (fromRight ? 0 : index), (fromRight ? index + 1 : length))
+        : baseSlice(array, (fromRight ? index + 1 : 0), (fromRight ? length : index));
+    }
+
+    /**
      * The base implementation of `wrapperValue` which returns the result of
      * performing a sequence of actions on the unwrapped `value`, where each
      * successive action is supplied the return value of the previous.
@@ -3015,7 +2977,7 @@ process.umask = function() { return 0; };
      * @private
      * @param {*} value The unwrapped value.
      * @param {Array} actions Actions to peform to resolve the unwrapped value.
-     * @returns {*} Returns the resolved unwrapped value.
+     * @returns {*} Returns the resolved value.
      */
     function baseWrapperValue(value, actions) {
       var result = value;
@@ -3042,8 +3004,7 @@ process.umask = function() { return 0; };
      * @private
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
-     * @param {boolean} [retHighest] Specify returning the highest, instead
-     *  of the lowest, index at which a value should be inserted into `array`.
+     * @param {boolean} [retHighest] Specify returning the highest qualified index.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
      */
@@ -3076,8 +3037,7 @@ process.umask = function() { return 0; };
      * @param {Array} array The sorted array to inspect.
      * @param {*} value The value to evaluate.
      * @param {Function} iteratee The function invoked per iteration.
-     * @param {boolean} [retHighest] Specify returning the highest, instead
-     *  of the lowest, index at which a value should be inserted into `array`.
+     * @param {boolean} [retHighest] Specify returning the highest qualified index.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
      */
@@ -3243,6 +3203,9 @@ process.umask = function() { return 0; };
      * object composed from the results of running each element in the collection
      * through an iteratee.
      *
+     * **Note:** This function is used to create `_.countBy`, `_.groupBy`, `_.indexBy`,
+     * and `_.partition`.
+     *
      * @private
      * @param {Function} setter The function to set keys and values of the accumulator object.
      * @param {Function} [initializer] The function to initialize the accumulator object.
@@ -3273,6 +3236,8 @@ process.umask = function() { return 0; };
     /**
      * Creates a function that assigns properties of source object(s) to a given
      * destination object.
+     *
+     * **Note:** This function is used to create `_.assign`, `_.defaults`, and `_.merge`.
      *
      * @private
      * @param {Function} assigner The function to assign values.
@@ -3314,6 +3279,56 @@ process.umask = function() { return 0; };
     }
 
     /**
+     * Creates a `baseEach` or `baseEachRight` function.
+     *
+     * @private
+     * @param {Function} eachFunc The function to iterate over a collection.
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new base function.
+     */
+    function createBaseEach(eachFunc, fromRight) {
+      return function(collection, iteratee) {
+        var length = collection ? collection.length : 0;
+        if (!isLength(length)) {
+          return eachFunc(collection, iteratee);
+        }
+        var index = fromRight ? length : -1,
+            iterable = toObject(collection);
+
+        while ((fromRight ? index-- : ++index < length)) {
+          if (iteratee(iterable[index], index, iterable) === false) {
+            break;
+          }
+        }
+        return collection;
+      };
+    }
+
+    /**
+     * Creates a base function for `_.forIn` or `_.forInRight`.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new base function.
+     */
+    function createBaseFor(fromRight) {
+      return function(object, iteratee, keysFunc) {
+        var iterable = toObject(object),
+            props = keysFunc(object),
+            length = props.length,
+            index = fromRight ? length : -1;
+
+        while ((fromRight ? index-- : ++index < length)) {
+          var key = props[index];
+          if (iteratee(iterable[key], key, iterable) === false) {
+            break;
+          }
+        }
+        return object;
+      };
+    }
+
+    /**
      * Creates a function that wraps `func` and invokes it with the `this`
      * binding of `thisArg`.
      *
@@ -3342,41 +3357,6 @@ process.umask = function() { return 0; };
     var createCache = !(nativeCreate && Set) ? constant(null) : function(values) {
       return new SetCache(values);
     };
-
-    /**
-     * Creates a function to compose other functions into a single function.
-     *
-     * @private
-     * @param {boolean} [fromRight] Specify iterating from right to left.
-     * @returns {Function} Returns the new composer function.
-     */
-    function createComposer(fromRight) {
-      return function() {
-        var length = arguments.length,
-            index = length,
-            fromIndex = fromRight ? (length - 1) : 0;
-
-        if (!length) {
-          return function() { return arguments[0]; };
-        }
-        var funcs = Array(length);
-        while (index--) {
-          funcs[index] = arguments[index];
-          if (typeof funcs[index] != 'function') {
-            throw new TypeError(FUNC_ERROR_TEXT);
-          }
-        }
-        return function() {
-          var index = fromIndex,
-              result = funcs[index].apply(this, arguments);
-
-          while ((fromRight ? index-- : ++index < length)) {
-            result = funcs[index].call(this, result);
-          }
-          return result;
-        };
-      };
-    }
 
     /**
      * Creates a function that produces compound words out of the words in a
@@ -3420,7 +3400,26 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Creates a function that gets the extremum value of a collection.
+     * Creates a `_.curry` or `_.curryRight` function.
+     *
+     * @private
+     * @param {boolean} flag The curry bit flag.
+     * @returns {Function} Returns the new curry function.
+     */
+    function createCurry(flag) {
+      function curryFunc(func, arity, guard) {
+        if (guard && isIterateeCall(func, arity, guard)) {
+          arity = null;
+        }
+        var result = createWrapper(func, flag, null, null, null, null, null, arity);
+        result.placeholder = curryFunc.placeholder;
+        return result;
+      }
+      return curryFunc;
+    }
+
+    /**
+     * Creates a `_.max` or `_.min` function.
      *
      * @private
      * @param {Function} arrayFunc The function to get the extremum value from an array.
@@ -3449,6 +3448,204 @@ process.umask = function() { return 0; };
           }
         }
         return extremumBy(collection, iteratee, isMin);
+      };
+    }
+
+    /**
+     * Creates a `_.find` or `_.findLast` function.
+     *
+     * @private
+     * @param {Function} eachFunc The function to iterate over a collection.
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new find function.
+     */
+    function createFind(eachFunc, fromRight) {
+      return function(collection, predicate, thisArg) {
+        predicate = getCallback(predicate, thisArg, 3);
+        if (isArray(collection)) {
+          var index = baseFindIndex(collection, predicate, fromRight);
+          return index > -1 ? collection[index] : undefined;
+        }
+        return baseFind(collection, predicate, eachFunc);
+      }
+    }
+
+    /**
+     * Creates a `_.findIndex` or `_.findLastIndex` function.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new find function.
+     */
+    function createFindIndex(fromRight) {
+      return function(array, predicate, thisArg) {
+        if (!(array && array.length)) {
+          return -1;
+        }
+        predicate = getCallback(predicate, thisArg, 3);
+        return baseFindIndex(array, predicate, fromRight);
+      };
+    }
+
+    /**
+     * Creates a `_.findKey` or `_.findLastKey` function.
+     *
+     * @private
+     * @param {Function} objectFunc The function to iterate over an object.
+     * @returns {Function} Returns the new find function.
+     */
+    function createFindKey(objectFunc) {
+      return function(object, predicate, thisArg) {
+        predicate = getCallback(predicate, thisArg, 3);
+        return baseFind(object, predicate, objectFunc, true);
+      };
+    }
+
+    /**
+     * Creates a `_.flow` or `_.flowRight` function.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new flow function.
+     */
+    function createFlow(fromRight) {
+      return function() {
+        var length = arguments.length;
+        if (!length) {
+          return function() { return arguments[0]; };
+        }
+        var wrapper,
+            index = fromRight ? length : -1,
+            leftIndex = 0,
+            funcs = Array(length);
+
+        while ((fromRight ? index-- : ++index < length)) {
+          var func = funcs[leftIndex++] = arguments[index];
+          if (typeof func != 'function') {
+            throw new TypeError(FUNC_ERROR_TEXT);
+          }
+          var funcName = wrapper ? '' : getFuncName(func);
+          wrapper = funcName == 'wrapper' ? new LodashWrapper([]) : wrapper;
+        }
+        index = wrapper ? -1 : length;
+        while (++index < length) {
+          func = funcs[index];
+          funcName = getFuncName(func);
+
+          var data = funcName == 'wrapper' ? getData(func) : null;
+          if (data && isLaziable(data[0])) {
+            wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
+          } else {
+            wrapper = (func.length == 1 && isLaziable(func)) ? wrapper[funcName]() : wrapper.thru(func);
+          }
+        }
+        return function() {
+          var args = arguments;
+          if (wrapper && args.length == 1 && isArray(args[0])) {
+            return wrapper.plant(args[0]).value();
+          }
+          var index = 0,
+              result = funcs[index].apply(this, args);
+
+          while (++index < length) {
+            result = funcs[index].call(this, result);
+          }
+          return result;
+        };
+      };
+    }
+
+    /**
+     * Creates a function for `_.forEach` or `_.forEachRight`.
+     *
+     * @private
+     * @param {Function} arrayFunc The function to iterate over an array.
+     * @param {Function} eachFunc The function to iterate over a collection.
+     * @returns {Function} Returns the new each function.
+     */
+    function createForEach(arrayFunc, eachFunc) {
+      return function(collection, iteratee, thisArg) {
+        return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+          ? arrayFunc(collection, iteratee)
+          : eachFunc(collection, bindCallback(iteratee, thisArg, 3));
+      };
+    }
+
+    /**
+     * Creates a function for `_.forIn` or `_.forInRight`.
+     *
+     * @private
+     * @param {Function} objectFunc The function to iterate over an object.
+     * @returns {Function} Returns the new each function.
+     */
+    function createForIn(objectFunc) {
+      return function(object, iteratee, thisArg) {
+        if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+          iteratee = bindCallback(iteratee, thisArg, 3);
+        }
+        return objectFunc(object, iteratee, keysIn);
+      };
+    }
+
+    /**
+     * Creates a function for `_.forOwn` or `_.forOwnRight`.
+     *
+     * @private
+     * @param {Function} objectFunc The function to iterate over an object.
+     * @returns {Function} Returns the new each function.
+     */
+    function createForOwn(objectFunc) {
+      return function(object, iteratee, thisArg) {
+        if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
+          iteratee = bindCallback(iteratee, thisArg, 3);
+        }
+        return objectFunc(object, iteratee);
+      };
+    }
+
+    /**
+     * Creates a function for `_.padLeft` or `_.padRight`.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify padding from the right.
+     * @returns {Function} Returns the new pad function.
+     */
+    function createPadDir(fromRight) {
+      return function(string, length, chars) {
+        string = baseToString(string);
+        return string && ((fromRight ? string : '') + createPadding(string, length, chars) + (fromRight ? '' : string));
+      };
+    }
+
+    /**
+     * Creates a `_.partial` or `_.partialRight` function.
+     *
+     * @private
+     * @param {boolean} flag The partial bit flag.
+     * @returns {Function} Returns the new partial function.
+     */
+    function createPartial(flag) {
+      var partialFunc = restParam(function(func, partials) {
+        var holders = replaceHolders(partials, partialFunc.placeholder);
+        return createWrapper(func, flag, null, partials, holders);
+      });
+      return partialFunc;
+    }
+
+    /**
+     * Creates a function for `_.reduce` or `_.reduceRight`.
+     *
+     * @private
+     * @param {Function} arrayFunc The function to iterate over an array.
+     * @param {Function} eachFunc The function to iterate over a collection.
+     * @returns {Function} Returns the new each function.
+     */
+    function createReduce(arrayFunc, eachFunc) {
+      return function(collection, iteratee, accumulator, thisArg) {
+        var initFromArray = arguments.length < 3;
+        return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
+          ? arrayFunc(collection, iteratee, accumulator, initFromArray)
+          : baseReduce(collection, getCallback(iteratee, thisArg, 4), accumulator, initFromArray, eachFunc);
       };
     }
 
@@ -3515,7 +3712,12 @@ process.umask = function() { return 0; };
             if (!isCurryBound) {
               bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
             }
-            var result = createHybridWrapper(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, newArity);
+            var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, newArity],
+                result = createHybridWrapper.apply(undefined, newData);
+
+            if (isLaziable(func)) {
+              setData(result, newData);
+            }
             result.placeholder = placeholder;
             return result;
           }
@@ -3537,9 +3739,8 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Creates the pad required for `string` based on the given padding length.
-     * The `chars` string may be truncated if the number of padding characters
-     * exceeds the padding length.
+     * Creates the padding required for `string` based on the given `length`.
+     * The `chars` string is truncated if the number of characters exceeds `length`.
      *
      * @private
      * @param {string} string The string to create padding for.
@@ -3547,7 +3748,7 @@ process.umask = function() { return 0; };
      * @param {string} [chars=' '] The string used as padding.
      * @returns {string} Returns the pad for `string`.
      */
-    function createPad(string, length, chars) {
+    function createPadding(string, length, chars) {
       var strLength = string.length;
       length = +length;
 
@@ -3597,6 +3798,22 @@ process.umask = function() { return 0; };
     }
 
     /**
+     * Creates a `_.sortedIndex` or `_.sortedLastIndex` function.
+     *
+     * @private
+     * @param {boolean} [retHighest] Specify returning the highest qualified index.
+     * @returns {Function} Returns the new index function.
+     */
+    function createSortedIndex(retHighest) {
+      return function(array, value, iteratee, thisArg) {
+        var func = getCallback(iteratee);
+        return (func === baseCallback && iteratee == null)
+          ? binaryIndex(array, value, retHighest)
+          : binaryIndexBy(array, value, func(iteratee, thisArg, 1), retHighest);
+      };
+    }
+
+    /**
      * Creates a function that either curries or invokes `func` with optional
      * `this` binding and partially applied arguments.
      *
@@ -3638,10 +3855,10 @@ process.umask = function() { return 0; };
 
         partials = holders = null;
       }
-      var data = !isBindKey && getData(func),
+      var data = isBindKey ? null : getData(func),
           newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
 
-      if (data && data !== true) {
+      if (data) {
         mergeData(newData, data);
         bitmask = newData[1];
         arity = newData[9];
@@ -3670,18 +3887,18 @@ process.umask = function() { return 0; };
      * @param {Array} other The other array to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparing arrays.
-     * @param {boolean} [isWhere] Specify performing partial comparisons.
+     * @param {boolean} [isLoose] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
      */
-    function equalArrays(array, other, equalFunc, customizer, isWhere, stackA, stackB) {
+    function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stackB) {
       var index = -1,
           arrLength = array.length,
           othLength = other.length,
           result = true;
 
-      if (arrLength != othLength && !(isWhere && othLength > arrLength)) {
+      if (arrLength != othLength && !(isLoose && othLength > arrLength)) {
         return false;
       }
       // Deep compare the contents, ignoring non-numeric properties.
@@ -3691,23 +3908,23 @@ process.umask = function() { return 0; };
 
         result = undefined;
         if (customizer) {
-          result = isWhere
+          result = isLoose
             ? customizer(othValue, arrValue, index)
             : customizer(arrValue, othValue, index);
         }
         if (typeof result == 'undefined') {
           // Recursively compare arrays (susceptible to call stack limits).
-          if (isWhere) {
+          if (isLoose) {
             var othIndex = othLength;
             while (othIndex--) {
               othValue = other[othIndex];
-              result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isWhere, stackA, stackB);
+              result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB);
               if (result) {
                 break;
               }
             }
           } else {
-            result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isWhere, stackA, stackB);
+            result = (arrValue && arrValue === othValue) || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB);
           }
         }
       }
@@ -3763,26 +3980,26 @@ process.umask = function() { return 0; };
      * @param {Object} other The other object to compare.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Function} [customizer] The function to customize comparing values.
-     * @param {boolean} [isWhere] Specify performing partial comparisons.
+     * @param {boolean} [isLoose] Specify performing partial comparisons.
      * @param {Array} [stackA] Tracks traversed `value` objects.
      * @param {Array} [stackB] Tracks traversed `other` objects.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalObjects(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
+    function equalObjects(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
       var objProps = keys(object),
           objLength = objProps.length,
           othProps = keys(other),
           othLength = othProps.length;
 
-      if (objLength != othLength && !isWhere) {
+      if (objLength != othLength && !isLoose) {
         return false;
       }
-      var hasCtor,
+      var skipCtor = isLoose,
           index = -1;
 
       while (++index < objLength) {
         var key = objProps[index],
-            result = hasOwnProperty.call(other, key);
+            result = isLoose ? key in other : hasOwnProperty.call(other, key);
 
         if (result) {
           var objValue = object[key],
@@ -3790,21 +4007,21 @@ process.umask = function() { return 0; };
 
           result = undefined;
           if (customizer) {
-            result = isWhere
+            result = isLoose
               ? customizer(othValue, objValue, key)
               : customizer(objValue, othValue, key);
           }
           if (typeof result == 'undefined') {
             // Recursively compare objects (susceptible to call stack limits).
-            result = (objValue && objValue === othValue) || equalFunc(objValue, othValue, customizer, isWhere, stackA, stackB);
+            result = (objValue && objValue === othValue) || equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB);
           }
         }
         if (!result) {
           return false;
         }
-        hasCtor || (hasCtor = key == 'constructor');
+        skipCtor || (skipCtor = key == 'constructor');
       }
-      if (!hasCtor) {
+      if (!skipCtor) {
         var objCtor = object.constructor,
             othCtor = other.constructor;
 
@@ -3822,7 +4039,7 @@ process.umask = function() { return 0; };
     /**
      * Gets the extremum value of `collection` invoking `iteratee` for each value
      * in `collection` to generate the criterion by which the value is ranked.
-     * The `iteratee` is invoked with three arguments; (value, index, collection).
+     * The `iteratee` is invoked with three arguments: (value, index, collection).
      *
      * @private
      * @param {Array|Object|string} collection The collection to iterate over.
@@ -3872,6 +4089,37 @@ process.umask = function() { return 0; };
     var getData = !metaMap ? noop : function(func) {
       return metaMap.get(func);
     };
+
+    /**
+     * Gets the name of `func`.
+     *
+     * @private
+     * @param {Function} func The function to query.
+     * @returns {string} Returns the function name.
+     */
+    var getFuncName = (function() {
+      if (!support.funcNames) {
+        return constant('');
+      }
+      if (constant.name == 'constant') {
+        return baseProperty('name');
+      }
+      return function(func) {
+        var result = func.name,
+            array = realNames[result],
+            length = array ? array.length : 0;
+
+        while (length--) {
+          var data = array[length],
+              otherFunc = data.func;
+
+          if (otherFunc == null || otherFunc == func) {
+            return data.name;
+          }
+        }
+        return result;
+      };
+    }());
 
     /**
      * Gets the appropriate "indexOf" function. If the `_.indexOf` method is
@@ -3991,31 +4239,6 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Checks if `func` is eligible for `this` binding.
-     *
-     * @private
-     * @param {Function} func The function to check.
-     * @returns {boolean} Returns `true` if `func` is eligible, else `false`.
-     */
-    function isBindable(func) {
-      var support = lodash.support,
-          result = !(support.funcNames ? func.name : support.funcDecomp);
-
-      if (!result) {
-        var source = fnToString.call(func);
-        if (!support.funcNames) {
-          result = !reFuncName.test(source);
-        }
-        if (!result) {
-          // Check if `func` references the `this` keyword and store the result.
-          result = reThis.test(source) || isNative(func);
-          baseSetData(func, result);
-        }
-      }
-      return result;
-    }
-
-    /**
      * Checks if `value` is a valid array-like index.
      *
      * @private
@@ -4057,11 +4280,21 @@ process.umask = function() { return 0; };
     }
 
     /**
+     * Checks if `func` has a lazy counterpart.
+     *
+     * @private
+     * @param {Function} func The function to check.
+     * @returns {boolean} Returns `true` if `func` has a lazy counterpart, else `false`.
+     */
+    function isLaziable(func) {
+      var funcName = getFuncName(func);
+      return !!funcName && func === lodash[funcName] && funcName in LazyWrapper.prototype;
+    }
+
+    /**
      * Checks if `value` is a valid array-like length.
      *
-     * **Note:** This function is based on ES `ToLength`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
-     * for more details.
+     * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
      *
      * @private
      * @param {*} value The value to check.
@@ -4101,22 +4334,13 @@ process.umask = function() { return 0; };
     function mergeData(data, source) {
       var bitmask = data[1],
           srcBitmask = source[1],
-          newBitmask = bitmask | srcBitmask;
+          newBitmask = bitmask | srcBitmask,
+          isCommon = newBitmask < ARY_FLAG;
 
-      var arityFlags = ARY_FLAG | REARG_FLAG,
-          bindFlags = BIND_FLAG | BIND_KEY_FLAG,
-          comboFlags = arityFlags | bindFlags | CURRY_BOUND_FLAG | CURRY_RIGHT_FLAG;
-
-      var isAry = bitmask & ARY_FLAG && !(srcBitmask & ARY_FLAG),
-          isRearg = bitmask & REARG_FLAG && !(srcBitmask & REARG_FLAG),
-          argPos = (isRearg ? data : source)[7],
-          ary = (isAry ? data : source)[8];
-
-      var isCommon = !(bitmask >= REARG_FLAG && srcBitmask > bindFlags) &&
-        !(bitmask > bindFlags && srcBitmask >= REARG_FLAG);
-
-      var isCombo = (newBitmask >= arityFlags && newBitmask <= comboFlags) &&
-        (bitmask < REARG_FLAG || ((isRearg || isAry) && argPos.length <= ary));
+      var isCombo =
+        (srcBitmask == ARY_FLAG && bitmask == CURRY_FLAG) ||
+        (srcBitmask == ARY_FLAG && bitmask == REARG_FLAG && data[7].length <= source[8]) ||
+        (srcBitmask == (ARY_FLAG | REARG_FLAG) && bitmask == CURRY_FLAG);
 
       // Exit early if metadata can't be merged.
       if (!(isCommon || isCombo)) {
@@ -4435,10 +4659,9 @@ process.umask = function() { return 0; };
      * Creates an array excluding all values of the provided arrays using
      * `SameValueZero` for equality comparisons.
      *
-     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
-     * e.g. `===`, except that `NaN` matches `NaN`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for more details.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -4451,19 +4674,11 @@ process.umask = function() { return 0; };
      * _.difference([1, 2, 3], [4, 2]);
      * // => [1, 3]
      */
-    function difference() {
-      var args = arguments,
-          index = -1,
-          length = args.length;
-
-      while (++index < length) {
-        var value = args[index];
-        if (isArray(value) || isArguments(value)) {
-          break;
-        }
-      }
-      return baseDifference(value, baseFlatten(args, false, true, ++index));
-    }
+    var difference = restParam(function(array, values) {
+      return (isArray(array) || isArguments(array))
+        ? baseDifference(array, baseFlatten(values, false, true))
+        : [];
+    });
 
     /**
      * Creates a slice of `array` with `n` elements dropped from the beginning.
@@ -4539,7 +4754,7 @@ process.umask = function() { return 0; };
     /**
      * Creates a slice of `array` excluding elements dropped from the end.
      * Elements are dropped until `predicate` returns falsey. The predicate is
-     * bound to `thisArg` and invoked with three arguments; (value, index, array).
+     * bound to `thisArg` and invoked with three arguments: (value, index, array).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -4586,19 +4801,15 @@ process.umask = function() { return 0; };
      * // => ['barney', 'fred', 'pebbles']
      */
     function dropRightWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      predicate = getCallback(predicate, thisArg, 3);
-      while (length-- && predicate(array[length], length, array)) {}
-      return baseSlice(array, 0, length + 1);
+      return (array && array.length)
+        ? baseWhile(array, getCallback(predicate, thisArg, 3), true, true)
+        : [];
     }
 
     /**
      * Creates a slice of `array` excluding elements dropped from the beginning.
      * Elements are dropped until `predicate` returns falsey. The predicate is
-     * bound to `thisArg` and invoked with three arguments; (value, index, array).
+     * bound to `thisArg` and invoked with three arguments: (value, index, array).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -4645,14 +4856,9 @@ process.umask = function() { return 0; };
      * // => ['barney', 'fred', 'pebbles']
      */
     function dropWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      var index = -1;
-      predicate = getCallback(predicate, thisArg, 3);
-      while (++index < length && predicate(array[index], index, array)) {}
-      return baseSlice(array, index);
+      return (array && array.length)
+        ? baseWhile(array, getCallback(predicate, thisArg, 3), true)
+        : [];
     }
 
     /**
@@ -4669,6 +4875,19 @@ process.umask = function() { return 0; };
      * @param {number} [start=0] The start position.
      * @param {number} [end=array.length] The end position.
      * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [1, 2, 3];
+     *
+     * _.fill(array, 'a');
+     * console.log(array);
+     * // => ['a', 'a', 'a']
+     *
+     * _.fill(Array(3), 2);
+     * // => [2, 2, 2]
+     *
+     * _.fill([4, 6, 8], '*', 1, 2);
+     * // => [4, '*', 8]
      */
     function fill(array, value, start, end) {
       var length = array ? array.length : 0;
@@ -4684,7 +4903,7 @@ process.umask = function() { return 0; };
 
     /**
      * This method is like `_.find` except that it returns the index of the first
-     * element `predicate` returns truthy for, instead of the element itself.
+     * element `predicate` returns truthy for instead of the element itself.
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -4730,18 +4949,7 @@ process.umask = function() { return 0; };
      * _.findIndex(users, 'active');
      * // => 2
      */
-    function findIndex(array, predicate, thisArg) {
-      var index = -1,
-          length = array ? array.length : 0;
-
-      predicate = getCallback(predicate, thisArg, 3);
-      while (++index < length) {
-        if (predicate(array[index], index, array)) {
-          return index;
-        }
-      }
-      return -1;
-    }
+    var findIndex = createFindIndex();
 
     /**
      * This method is like `_.findIndex` except that it iterates over elements
@@ -4791,16 +4999,7 @@ process.umask = function() { return 0; };
      * _.findLastIndex(users, 'active');
      * // => 0
      */
-    function findLastIndex(array, predicate, thisArg) {
-      var length = array ? array.length : 0;
-      predicate = getCallback(predicate, thisArg, 3);
-      while (length--) {
-        if (predicate(array[length], length, array)) {
-          return length;
-        }
-      }
-      return -1;
-    }
+    var findLastIndex = createFindIndex(true);
 
     /**
      * Gets the first element of `array`.
@@ -4837,18 +5036,18 @@ process.umask = function() { return 0; };
      * @example
      *
      * _.flatten([1, [2, 3, [4]]]);
-     * // => [1, 2, 3, [4]];
+     * // => [1, 2, 3, [4]]
      *
      * // using `isDeep`
      * _.flatten([1, [2, 3, [4]]], true);
-     * // => [1, 2, 3, 4];
+     * // => [1, 2, 3, 4]
      */
     function flatten(array, isDeep, guard) {
       var length = array ? array.length : 0;
       if (guard && isIterateeCall(array, isDeep, guard)) {
         isDeep = false;
       }
-      return length ? baseFlatten(array, isDeep, false, 0) : [];
+      return length ? baseFlatten(array, isDeep) : [];
     }
 
     /**
@@ -4862,11 +5061,11 @@ process.umask = function() { return 0; };
      * @example
      *
      * _.flattenDeep([1, [2, 3, [4]]]);
-     * // => [1, 2, 3, 4];
+     * // => [1, 2, 3, 4]
      */
     function flattenDeep(array) {
       var length = array ? array.length : 0;
-      return length ? baseFlatten(array, true, false, 0) : [];
+      return length ? baseFlatten(array, true) : [];
     }
 
     /**
@@ -4875,10 +5074,9 @@ process.umask = function() { return 0; };
      * it is used as the offset from the end of `array`. If `array` is sorted
      * providing `true` for `fromIndex` performs a faster binary search.
      *
-     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
-     * e.g. `===`, except that `NaN` matches `NaN`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for more details.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -4941,10 +5139,9 @@ process.umask = function() { return 0; };
      * Creates an array of unique values in all provided arrays using `SameValueZero`
      * for equality comparisons.
      *
-     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
-     * e.g. `===`, except that `NaN` matches `NaN`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for more details.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5072,10 +5269,10 @@ process.umask = function() { return 0; };
      * comparisons.
      *
      * **Notes:**
-     *  - Unlike `_.without`, this method mutates `array`.
-     *  - `SameValueZero` comparisons are like strict equality comparisons, e.g. `===`,
-     *    except that `NaN` matches `NaN`. See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     *    for more details.
+     *  - Unlike `_.without`, this method mutates `array`
+     *  - [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     *    comparisons are like strict equality comparisons, e.g. `===`, except
+     *    that `NaN` matches `NaN`
      *
      * @static
      * @memberOf _
@@ -5138,14 +5335,28 @@ process.umask = function() { return 0; };
      * console.log(evens);
      * // => [10, 20]
      */
-    function pullAt(array) {
-      return basePullAt(array || [], baseFlatten(arguments, false, false, 1));
-    }
+    var pullAt = restParam(function(array, indexes) {
+      array || (array = []);
+      indexes = baseFlatten(indexes);
+
+      var length = indexes.length,
+          result = baseAt(array, indexes);
+
+      indexes.sort(baseCompareAscending);
+      while (length--) {
+        var index = parseFloat(indexes[length]);
+        if (index != previous && isIndex(index)) {
+          var previous = index;
+          splice.call(array, index, 1);
+        }
+      }
+      return result;
+    });
 
     /**
      * Removes all elements from `array` that `predicate` returns truthy for
      * and returns an array of the removed elements. The predicate is bound to
-     * `thisArg` and invoked with three arguments; (value, index, array).
+     * `thisArg` and invoked with three arguments: (value, index, array).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -5249,14 +5460,14 @@ process.umask = function() { return 0; };
      * to compute their sort ranking. The iteratee is bound to `thisArg` and
      * invoked with one argument; (value).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
@@ -5290,12 +5501,7 @@ process.umask = function() { return 0; };
      * _.sortedIndex([{ 'x': 30 }, { 'x': 50 }], { 'x': 40 }, 'x');
      * // => 1
      */
-    function sortedIndex(array, value, iteratee, thisArg) {
-      var func = getCallback(iteratee);
-      return (func === baseCallback && iteratee == null)
-        ? binaryIndex(array, value)
-        : binaryIndexBy(array, value, func(iteratee, thisArg, 1));
-    }
+    var sortedIndex = createSortedIndex();
 
     /**
      * This method is like `_.sortedIndex` except that it returns the highest
@@ -5317,12 +5523,7 @@ process.umask = function() { return 0; };
      * _.sortedLastIndex([4, 4, 5, 5], 5);
      * // => 4
      */
-    function sortedLastIndex(array, value, iteratee, thisArg) {
-      var func = getCallback(iteratee);
-      return (func === baseCallback && iteratee == null)
-        ? binaryIndex(array, value, true)
-        : binaryIndexBy(array, value, func(iteratee, thisArg, 1), true);
-    }
+    var sortedLastIndex = createSortedIndex(true);
 
     /**
      * Creates a slice of `array` with `n` elements taken from the beginning.
@@ -5398,7 +5599,7 @@ process.umask = function() { return 0; };
     /**
      * Creates a slice of `array` with elements taken from the end. Elements are
      * taken until `predicate` returns falsey. The predicate is bound to `thisArg`
-     * and invoked with three arguments; (value, index, array).
+     * and invoked with three arguments: (value, index, array).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -5445,19 +5646,15 @@ process.umask = function() { return 0; };
      * // => []
      */
     function takeRightWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      predicate = getCallback(predicate, thisArg, 3);
-      while (length-- && predicate(array[length], length, array)) {}
-      return baseSlice(array, length + 1);
+      return (array && array.length)
+        ? baseWhile(array, getCallback(predicate, thisArg, 3), false, true)
+        : [];
     }
 
     /**
      * Creates a slice of `array` with elements taken from the beginning. Elements
      * are taken until `predicate` returns falsey. The predicate is bound to
-     * `thisArg` and invoked with three arguments; (value, index, array).
+     * `thisArg` and invoked with three arguments: (value, index, array).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -5504,24 +5701,18 @@ process.umask = function() { return 0; };
      * // => []
      */
     function takeWhile(array, predicate, thisArg) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      var index = -1;
-      predicate = getCallback(predicate, thisArg, 3);
-      while (++index < length && predicate(array[index], index, array)) {}
-      return baseSlice(array, 0, index);
+      return (array && array.length)
+        ? baseWhile(array, getCallback(predicate, thisArg, 3))
+        : [];
     }
 
     /**
      * Creates an array of unique values, in order, of the provided arrays using
      * `SameValueZero` for equality comparisons.
      *
-     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
-     * e.g. `===`, except that `NaN` matches `NaN`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for more details.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5533,9 +5724,9 @@ process.umask = function() { return 0; };
      * _.union([1, 2], [4, 2], [2, 1]);
      * // => [1, 2, 4]
      */
-    function union() {
-      return baseUniq(baseFlatten(arguments, false, true, 0));
-    }
+    var union = restParam(function(arrays) {
+      return baseUniq(baseFlatten(arrays, false, true));
+    });
 
     /**
      * Creates a duplicate-value-free version of an array using `SameValueZero`
@@ -5543,23 +5734,22 @@ process.umask = function() { return 0; };
      * search algorithm for sorted arrays. If an iteratee function is provided it
      * is invoked for each value in the array to generate the criterion by which
      * uniqueness is computed. The `iteratee` is bound to `thisArg` and invoked
-     * with three arguments; (value, index, array).
+     * with three arguments: (value, index, array).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
-     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
-     * e.g. `===`, except that `NaN` matches `NaN`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for more details.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5641,10 +5831,9 @@ process.umask = function() { return 0; };
      * Creates an array excluding all provided values using `SameValueZero` for
      * equality comparisons.
      *
-     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
-     * e.g. `===`, except that `NaN` matches `NaN`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for more details.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5657,14 +5846,15 @@ process.umask = function() { return 0; };
      * _.without([1, 2, 1, 3], 1, 2);
      * // => [3]
      */
-    function without(array) {
-      return baseDifference(array, baseSlice(arguments, 1));
-    }
+    var without = restParam(function(array, values) {
+      return (isArray(array) || isArguments(array))
+        ? baseDifference(array, values)
+        : [];
+    });
 
     /**
-     * Creates an array that is the symmetric difference of the provided arrays.
-     * See [Wikipedia](https://en.wikipedia.org/wiki/Symmetric_difference) for
-     * more details.
+     * Creates an array that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
+     * of the provided arrays.
      *
      * @static
      * @memberOf _
@@ -5706,20 +5896,13 @@ process.umask = function() { return 0; };
      * _.zip(['fred', 'barney'], [30, 40], [true, false]);
      * // => [['fred', 30, true], ['barney', 40, false]]
      */
-    function zip() {
-      var length = arguments.length,
-          array = Array(length);
-
-      while (length--) {
-        array[length] = arguments[length];
-      }
-      return unzip(array);
-    }
+    var zip = restParam(unzip);
 
     /**
-     * Creates an object composed from arrays of property names and values. Provide
-     * either a single two dimensional array, e.g. `[[key1, value1], [key2, value2]]`
-     * or two arrays, one of property names and one of corresponding values.
+     * The inverse of `_.pairs`; this method returns an object composed from arrays
+     * of property names and values. Provide either a single two dimensional array,
+     * e.g. `[[key1, value1], [key2, value2]]` or two arrays, one of property names
+     * and one of corresponding values.
      *
      * @static
      * @memberOf _
@@ -5729,6 +5912,9 @@ process.umask = function() { return 0; };
      * @param {Array} [values=[]] The property values.
      * @returns {Object} Returns the new object.
      * @example
+     *
+     * _.zipObject([['fred', 30], ['barney', 40]]);
+     * // => { 'fred': 30, 'barney': 40 }
      *
      * _.zipObject(['fred', 'barney'], [30, 40]);
      * // => { 'fred': 30, 'barney': 40 }
@@ -5826,13 +6012,14 @@ process.umask = function() { return 0; };
      * @returns {*} Returns the result of `interceptor`.
      * @example
      *
-     * _([1, 2, 3])
-     *  .last()
+     * _('  abc  ')
+     *  .chain()
+     *  .trim()
      *  .thru(function(value) {
      *    return [value];
      *  })
      *  .value();
-     * // => [3]
+     * // => ['abc']
      */
     function thru(value, interceptor, thisArg) {
       return interceptor.call(thisArg, value);
@@ -6022,32 +6209,32 @@ process.umask = function() { return 0; };
      * _.at(['a', 'b', 'c'], [0, 2]);
      * // => ['a', 'c']
      *
-     * _.at(['fred', 'barney', 'pebbles'], 0, 2);
-     * // => ['fred', 'pebbles']
+     * _.at(['barney', 'fred', 'pebbles'], 0, 2);
+     * // => ['barney', 'pebbles']
      */
-    function at(collection) {
+    var at = restParam(function(collection, props) {
       var length = collection ? collection.length : 0;
       if (isLength(length)) {
         collection = toIterable(collection);
       }
-      return baseAt(collection, baseFlatten(arguments, false, false, 1));
-    }
+      return baseAt(collection, baseFlatten(props));
+    });
 
     /**
      * Creates an object composed of keys generated from the results of running
      * each element of `collection` through `iteratee`. The corresponding value
      * of each key is the number of times the key was returned by `iteratee`.
-     * The `iteratee` is bound to `thisArg` and invoked with three arguments;
+     * The `iteratee` is bound to `thisArg` and invoked with three arguments:
      * (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
@@ -6080,7 +6267,7 @@ process.umask = function() { return 0; };
 
     /**
      * Checks if `predicate` returns truthy for **all** elements of `collection`.
-     * The predicate is bound to `thisArg` and invoked with three arguments;
+     * The predicate is bound to `thisArg` and invoked with three arguments:
      * (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created `_.property`
@@ -6128,6 +6315,9 @@ process.umask = function() { return 0; };
      */
     function every(collection, predicate, thisArg) {
       var func = isArray(collection) ? arrayEvery : baseEvery;
+      if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
+        predicate = null;
+      }
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
         predicate = getCallback(predicate, thisArg, 3);
       }
@@ -6137,7 +6327,7 @@ process.umask = function() { return 0; };
     /**
      * Iterates over elements of `collection`, returning an array of all elements
      * `predicate` returns truthy for. The predicate is bound to `thisArg` and
-     * invoked with three arguments; (value, index|key, collection).
+     * invoked with three arguments: (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -6192,7 +6382,7 @@ process.umask = function() { return 0; };
     /**
      * Iterates over elements of `collection`, returning the first element
      * `predicate` returns truthy for. The predicate is bound to `thisArg` and
-     * invoked with three arguments; (value, index|key, collection).
+     * invoked with three arguments: (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -6239,14 +6429,7 @@ process.umask = function() { return 0; };
      * _.result(_.find(users, 'active'), 'user');
      * // => 'barney'
      */
-    function find(collection, predicate, thisArg) {
-      if (isArray(collection)) {
-        var index = findIndex(collection, predicate, thisArg);
-        return index > -1 ? collection[index] : undefined;
-      }
-      predicate = getCallback(predicate, thisArg, 3);
-      return baseFind(collection, predicate, baseEach);
-    }
+    var find = createFind(baseEach);
 
     /**
      * This method is like `_.find` except that it iterates over elements of
@@ -6267,10 +6450,7 @@ process.umask = function() { return 0; };
      * });
      * // => 3
      */
-    function findLast(collection, predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-      return baseFind(collection, predicate, baseEachRight);
-    }
+    var findLast = createFind(baseEachRight, true);
 
     /**
      * Performs a deep comparison between each element in `collection` and the
@@ -6307,7 +6487,7 @@ process.umask = function() { return 0; };
 
     /**
      * Iterates over elements of `collection` invoking `iteratee` for each element.
-     * The `iteratee` is bound to `thisArg` and invoked with three arguments;
+     * The `iteratee` is bound to `thisArg` and invoked with three arguments:
      * (value, index|key, collection). Iterator functions may exit iteration early
      * by explicitly returning `false`.
      *
@@ -6335,11 +6515,7 @@ process.umask = function() { return 0; };
      * });
      * // => logs each value-key pair and returns the object (iteration order is not guaranteed)
      */
-    function forEach(collection, iteratee, thisArg) {
-      return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
-        ? arrayEach(collection, iteratee)
-        : baseEach(collection, bindCallback(iteratee, thisArg, 3));
-    }
+    var forEach = createForEach(arrayEach, baseEach);
 
     /**
      * This method is like `_.forEach` except that it iterates over elements of
@@ -6357,30 +6533,26 @@ process.umask = function() { return 0; };
      *
      * _([1, 2]).forEachRight(function(n) {
      *   console.log(n);
-     * }).join(',');
+     * }).value();
      * // => logs each value from right to left and returns the array
      */
-    function forEachRight(collection, iteratee, thisArg) {
-      return (typeof iteratee == 'function' && typeof thisArg == 'undefined' && isArray(collection))
-        ? arrayEachRight(collection, iteratee)
-        : baseEachRight(collection, bindCallback(iteratee, thisArg, 3));
-    }
+    var forEachRight = createForEach(arrayEachRight, baseEachRight);
 
     /**
      * Creates an object composed of keys generated from the results of running
      * each element of `collection` through `iteratee`. The corresponding value
      * of each key is an array of the elements responsible for generating the key.
-     * The `iteratee` is bound to `thisArg` and invoked with three arguments;
+     * The `iteratee` is bound to `thisArg` and invoked with three arguments:
      * (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
@@ -6421,10 +6593,9 @@ process.umask = function() { return 0; };
      * comparisons. If `fromIndex` is negative, it is used as the offset from
      * the end of `collection`.
      *
-     * **Note:** `SameValueZero` comparisons are like strict equality comparisons,
-     * e.g. `===`, except that `NaN` matches `NaN`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for more details.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -6433,6 +6604,7 @@ process.umask = function() { return 0; };
      * @param {Array|Object|string} collection The collection to search.
      * @param {*} target The value to search for.
      * @param {number} [fromIndex=0] The index to search from.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
      * @returns {boolean} Returns `true` if a matching element is found, else `false`.
      * @example
      *
@@ -6448,7 +6620,7 @@ process.umask = function() { return 0; };
      * _.includes('pebbles', 'eb');
      * // => true
      */
-    function includes(collection, target, fromIndex) {
+    function includes(collection, target, fromIndex, guard) {
       var length = collection ? collection.length : 0;
       if (!isLength(length)) {
         collection = values(collection);
@@ -6457,10 +6629,10 @@ process.umask = function() { return 0; };
       if (!length) {
         return false;
       }
-      if (typeof fromIndex == 'number') {
-        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
-      } else {
+      if (typeof fromIndex != 'number' || (guard && isIterateeCall(target, fromIndex, guard))) {
         fromIndex = 0;
+      } else {
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
       }
       return (typeof collection == 'string' || !isArray(collection) && isString(collection))
         ? (fromIndex < length && collection.indexOf(target, fromIndex) > -1)
@@ -6471,17 +6643,17 @@ process.umask = function() { return 0; };
      * Creates an object composed of keys generated from the results of running
      * each element of `collection` through `iteratee`. The corresponding value
      * of each key is the last element responsible for generating the key. The
-     * iteratee function is bound to `thisArg` and invoked with three arguments;
+     * iteratee function is bound to `thisArg` and invoked with three arguments:
      * (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
@@ -6539,23 +6711,32 @@ process.umask = function() { return 0; };
      * _.invoke([123, 456], String.prototype.split, '');
      * // => [['1', '2', '3'], ['4', '5', '6']]
      */
-    function invoke(collection, methodName) {
-      return baseInvoke(collection, methodName, baseSlice(arguments, 2));
-    }
+    var invoke = restParam(function(collection, methodName, args) {
+      var index = -1,
+          isFunc = typeof methodName == 'function',
+          length = collection ? collection.length : 0,
+          result = isLength(length) ? Array(length) : [];
+
+      baseEach(collection, function(value) {
+        var func = isFunc ? methodName : (value != null && value[methodName]);
+        result[++index] = func ? func.apply(value, args) : undefined;
+      });
+      return result;
+    });
 
     /**
      * Creates an array of values by running each element in `collection` through
      * `iteratee`. The `iteratee` is bound to `thisArg` and invoked with three
-     * arguments; (value, index|key, collection).
+     * arguments: (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
@@ -6564,9 +6745,9 @@ process.umask = function() { return 0; };
      *
      * The guarded methods are:
      * `ary`, `callback`, `chunk`, `clone`, `create`, `curry`, `curryRight`, `drop`,
-     * `dropRight`, `fill`, `flatten`, `invert`, `max`, `min`, `parseInt`, `slice`,
-     * `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimLeft`, `trimRight`,
-     * `trunc`, `random`, `range`, `sample`, `uniq`, and `words`
+     * `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`, `parseInt`,
+     * `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimLeft`,
+     * `trimRight`, `trunc`, `random`, `range`, `sample`, `some`, `uniq`, and `words`
      *
      * @static
      * @memberOf _
@@ -6609,7 +6790,7 @@ process.umask = function() { return 0; };
      * Creates an array of elements split into two groups, the first of which
      * contains elements `predicate` returns truthy for, while the second of which
      * contains elements `predicate` returns falsey for. The predicate is bound
-     * to `thisArg` and invoked with three arguments; (value, index|key, collection).
+     * to `thisArg` and invoked with three arguments: (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -6700,14 +6881,14 @@ process.umask = function() { return 0; };
      * each element in `collection` through `iteratee`, where each successive
      * invocation is supplied the return value of the previous. If `accumulator`
      * is not provided the first element of `collection` is used as the initial
-     * value. The `iteratee` is bound to `thisArg`and invoked with four arguments;
+     * value. The `iteratee` is bound to `thisArg` and invoked with four arguments:
      * (accumulator, value, index|key, collection).
      *
      * Many lodash methods are guarded to work as interatees for methods like
      * `_.reduce`, `_.reduceRight`, and `_.transform`.
      *
      * The guarded methods are:
-     * `assign`, `defaults`, `merge`, and `sortAllBy`
+     * `assign`, `defaults`, `includes`, `merge`, `sortByAll`, and `sortByOrder`
      *
      * @static
      * @memberOf _
@@ -6731,10 +6912,7 @@ process.umask = function() { return 0; };
      * }, {});
      * // => { 'a': 3, 'b': 6 } (iteration order is not guaranteed)
      */
-    function reduce(collection, iteratee, accumulator, thisArg) {
-      var func = isArray(collection) ? arrayReduce : baseReduce;
-      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEach);
-    }
+    var reduce = createReduce(arrayReduce, baseEach);
 
     /**
      * This method is like `_.reduce` except that it iterates over elements of
@@ -6758,10 +6936,7 @@ process.umask = function() { return 0; };
      * }, []);
      * // => [4, 5, 2, 3, 0, 1]
      */
-    function reduceRight(collection, iteratee, accumulator, thisArg) {
-      var func = isArray(collection) ? arrayReduceRight : baseReduce;
-      return func(collection, getCallback(iteratee, thisArg, 4), accumulator, arguments.length < 3, baseEachRight);
-    }
+    var reduceRight =  createReduce(arrayReduceRight, baseEachRight);
 
     /**
      * The opposite of `_.filter`; this method returns the elements of `collection`
@@ -6848,9 +7023,8 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Creates an array of shuffled values, using a version of the Fisher-Yates
-     * shuffle. See [Wikipedia](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle)
-     * for more details.
+     * Creates an array of shuffled values, using a version of the
+     * [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
      *
      * @static
      * @memberOf _
@@ -6908,7 +7082,7 @@ process.umask = function() { return 0; };
      * Checks if `predicate` returns truthy for **any** element of `collection`.
      * The function returns as soon as it finds a passing value and does not iterate
      * over the entire collection. The predicate is bound to `thisArg` and invoked
-     * with three arguments; (value, index|key, collection).
+     * with three arguments: (value, index|key, collection).
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -6955,6 +7129,9 @@ process.umask = function() { return 0; };
      */
     function some(collection, predicate, thisArg) {
       var func = isArray(collection) ? arraySome : baseSome;
+      if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
+        predicate = null;
+      }
       if (typeof predicate != 'function' || typeof thisArg != 'undefined') {
         predicate = getCallback(predicate, thisArg, 3);
       }
@@ -6965,17 +7142,17 @@ process.umask = function() { return 0; };
      * Creates an array of elements, sorted in ascending order by the results of
      * running each element in a collection through `iteratee`. This method performs
      * a stable sort, that is, it preserves the original sort order of equal elements.
-     * The `iteratee` is bound to `thisArg` and invoked with three arguments;
+     * The `iteratee` is bound to `thisArg` and invoked with three arguments:
      * (value, index|key, collection).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
@@ -7051,17 +7228,24 @@ process.umask = function() { return 0; };
      * _.map(_.sortByAll(users, ['user', 'age']), _.values);
      * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
      */
-    function sortByAll(collection) {
+    function sortByAll() {
+      var args = arguments,
+          collection = args[0],
+          guard = args[3],
+          index = 0,
+          length = args.length - 1;
+
       if (collection == null) {
         return [];
       }
-      var args = arguments,
-          guard = args[3];
-
-      if (guard && isIterateeCall(args[1], args[2], guard)) {
-        args = [collection, args[1]];
+      var props = Array(length);
+      while (index < length) {
+        props[index] = args[++index];
       }
-      return baseSortByOrder(collection, baseFlatten(args, false, false, 1), []);
+      if (guard && isIterateeCall(args[1], args[2], guard)) {
+        props = args[1];
+      }
+      return baseSortByOrder(collection, baseFlatten(props), []);
     }
 
     /**
@@ -7280,7 +7464,7 @@ process.umask = function() { return 0; };
      * @category Function
      * @param {Function} func The function to bind.
      * @param {*} thisArg The `this` binding of `func`.
-     * @param {...*} [args] The arguments to be partially applied.
+     * @param {...*} [partials] The arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
      *
@@ -7299,16 +7483,14 @@ process.umask = function() { return 0; };
      * bound('hi');
      * // => 'hi fred!'
      */
-    function bind(func, thisArg) {
+    var bind = restParam(function(func, thisArg, partials) {
       var bitmask = BIND_FLAG;
-      if (arguments.length > 2) {
-        var partials = baseSlice(arguments, 2),
-            holders = replaceHolders(partials, bind.placeholder);
-
+      if (partials.length) {
+        var holders = replaceHolders(partials, bind.placeholder);
         bitmask |= PARTIAL_FLAG;
       }
       return createWrapper(func, bitmask, thisArg, partials, holders);
-    }
+    });
 
     /**
      * Binds methods of an object to the object itself, overwriting the existing
@@ -7338,13 +7520,18 @@ process.umask = function() { return 0; };
      * jQuery('#docs').on('click', view.onClick);
      * // => logs 'clicked docs' when the element is clicked
      */
-    function bindAll(object) {
-      return baseBindAll(object,
-        arguments.length > 1
-          ? baseFlatten(arguments, false, false, 1)
-          : functions(object)
-      );
-    }
+    var bindAll = restParam(function(object, methodNames) {
+      methodNames = methodNames.length ? baseFlatten(methodNames) : functions(object);
+
+      var index = -1,
+          length = methodNames.length;
+
+      while (++index < length) {
+        var key = methodNames[index];
+        object[key] = createWrapper(object[key], BIND_FLAG, object);
+      }
+      return object;
+    });
 
     /**
      * Creates a function that invokes the method at `object[key]` and prepends
@@ -7363,7 +7550,7 @@ process.umask = function() { return 0; };
      * @category Function
      * @param {Object} object The object the method belongs to.
      * @param {string} key The key of the method.
-     * @param {...*} [args] The arguments to be partially applied.
+     * @param {...*} [partials] The arguments to be partially applied.
      * @returns {Function} Returns the new bound function.
      * @example
      *
@@ -7390,16 +7577,14 @@ process.umask = function() { return 0; };
      * bound('hi');
      * // => 'hiya fred!'
      */
-    function bindKey(object, key) {
+    var bindKey = restParam(function(object, key, partials) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
-      if (arguments.length > 2) {
-        var partials = baseSlice(arguments, 2),
-            holders = replaceHolders(partials, bindKey.placeholder);
-
+      if (partials.length) {
+        var holders = replaceHolders(partials, bindKey.placeholder);
         bitmask |= PARTIAL_FLAG;
       }
       return createWrapper(key, bitmask, object, partials, holders);
-    }
+    });
 
     /**
      * Creates a function that accepts one or more arguments of `func` that when
@@ -7441,14 +7626,7 @@ process.umask = function() { return 0; };
      * curried(1)(_, 3)(2);
      * // => [1, 2, 3]
      */
-    function curry(func, arity, guard) {
-      if (guard && isIterateeCall(func, arity, guard)) {
-        arity = null;
-      }
-      var result = createWrapper(func, CURRY_FLAG, null, null, null, null, null, arity);
-      result.placeholder = curry.placeholder;
-      return result;
-    }
+    var curry = createCurry(CURRY_FLAG);
 
     /**
      * This method is like `_.curry` except that arguments are applied to `func`
@@ -7487,14 +7665,7 @@ process.umask = function() { return 0; };
      * curried(3)(1, _)(2);
      * // => [1, 2, 3]
      */
-    function curryRight(func, arity, guard) {
-      if (guard && isIterateeCall(func, arity, guard)) {
-        arity = null;
-      }
-      var result = createWrapper(func, CURRY_RIGHT_FLAG, null, null, null, null, null, arity);
-      result.placeholder = curryRight.placeholder;
-      return result;
-    }
+    var curryRight = createCurry(CURRY_RIGHT_FLAG);
 
     /**
      * Creates a function that delays invoking `func` until after `wait` milliseconds
@@ -7689,9 +7860,9 @@ process.umask = function() { return 0; };
      * }, 'deferred');
      * // logs 'deferred' after one or more milliseconds
      */
-    function defer(func) {
-      return baseDelay(func, 1, arguments, 1);
-    }
+    var defer = restParam(function(func, args) {
+      return baseDelay(func, 1, args);
+    });
 
     /**
      * Invokes `func` after `wait` milliseconds. Any additional arguments are
@@ -7711,9 +7882,9 @@ process.umask = function() { return 0; };
      * }, 1000, 'later');
      * // => logs 'later' after one second
      */
-    function delay(func, wait) {
-      return baseDelay(func, wait, arguments, 2);
-    }
+    var delay = restParam(function(func, wait, args) {
+      return baseDelay(func, wait, args);
+    });
 
     /**
      * Creates a function that returns the result of invoking the provided
@@ -7735,7 +7906,7 @@ process.umask = function() { return 0; };
      * addSquare(1, 2);
      * // => 9
      */
-    var flow = createComposer();
+    var flow = createFlow();
 
     /**
      * This method is like `_.flow` except that it creates a function that
@@ -7757,7 +7928,7 @@ process.umask = function() { return 0; };
      * addSquare(1, 2);
      * // => 9
      */
-    var flowRight = createComposer(true);
+    var flowRight = createFlow(true);
 
     /**
      * Creates a function that memoizes the result of `func`. If `resolver` is
@@ -7769,10 +7940,8 @@ process.umask = function() { return 0; };
      *
      * **Note:** The cache is exposed as the `cache` property on the memoized
      * function. Its creation may be customized by replacing the `_.memoize.Cache`
-     * constructor with one whose instances implement the ES `Map` method interface
-     * of `get`, `has`, and `set`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-map-prototype-object)
-     * for more details.
+     * constructor with one whose instances implement the [`Map`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-map-prototype-object)
+     * method interface of `get`, `has`, and `set`.
      *
      * @static
      * @memberOf _
@@ -7863,7 +8032,7 @@ process.umask = function() { return 0; };
     /**
      * Creates a function that is restricted to invoking `func` once. Repeat calls
      * to the function return the value of the first call. The `func` is invoked
-     * with the `this` binding of the created function.
+     * with the `this` binding and arguments of the created function.
      *
      * @static
      * @memberOf _
@@ -7896,7 +8065,7 @@ process.umask = function() { return 0; };
      * @memberOf _
      * @category Function
      * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [args] The arguments to be partially applied.
+     * @param {...*} [partials] The arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
@@ -7913,12 +8082,7 @@ process.umask = function() { return 0; };
      * greetFred('hi');
      * // => 'hi fred'
      */
-    function partial(func) {
-      var partials = baseSlice(arguments, 1),
-          holders = replaceHolders(partials, partial.placeholder);
-
-      return createWrapper(func, PARTIAL_FLAG, null, partials, holders);
-    }
+    var partial = createPartial(PARTIAL_FLAG);
 
     /**
      * This method is like `_.partial` except that partially applied arguments
@@ -7934,7 +8098,7 @@ process.umask = function() { return 0; };
      * @memberOf _
      * @category Function
      * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [args] The arguments to be partially applied.
+     * @param {...*} [partials] The arguments to be partially applied.
      * @returns {Function} Returns the new partially applied function.
      * @example
      *
@@ -7951,12 +8115,7 @@ process.umask = function() { return 0; };
      * sayHelloTo('fred');
      * // => 'hello fred'
      */
-    function partialRight(func) {
-      var partials = baseSlice(arguments, 1),
-          holders = replaceHolders(partials, partialRight.placeholder);
-
-      return createWrapper(func, PARTIAL_RIGHT_FLAG, null, partials, holders);
-    }
+    var partialRight = createPartial(PARTIAL_RIGHT_FLAG);
 
     /**
      * Creates a function that invokes `func` with arguments arranged according
@@ -7986,29 +8145,80 @@ process.umask = function() { return 0; };
      * }, [1, 2, 3]);
      * // => [3, 6, 9]
      */
-    function rearg(func) {
-      var indexes = baseFlatten(arguments, false, false, 1);
-      return createWrapper(func, REARG_FLAG, null, null, null, indexes);
-    }
+    var rearg = restParam(function(func, indexes) {
+      return createWrapper(func, REARG_FLAG, null, null, null, baseFlatten(indexes));
+    });
 
     /**
      * Creates a function that invokes `func` with the `this` binding of the
-     * created function and the array of arguments provided to the created
-     * function much like [Function#apply](http://es5.github.io/#x15.3.4.3).
+     * created function and arguments from `start` and beyond provided as an array.
+     *
+     * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters).
+     *
+     * @static
+     * @memberOf _
+     * @category Function
+     * @param {Function} func The function to apply a rest parameter to.
+     * @param {number} [start=func.length-1] The start position of the rest parameter.
+     * @returns {Function} Returns the new function.
+     * @example
+     *
+     * var say = _.restParam(function(what, names) {
+     *   return what + ' ' + _.initial(names).join(', ') +
+     *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
+     * });
+     *
+     * say('hello', 'fred', 'barney', 'pebbles');
+     * // => 'hello fred, barney, & pebbles'
+     */
+    function restParam(func, start) {
+      if (typeof func != 'function') {
+        throw new TypeError(FUNC_ERROR_TEXT);
+      }
+      start = nativeMax(typeof start == 'undefined' ? (func.length - 1) : (+start || 0), 0);
+      return function() {
+        var args = arguments,
+            index = -1,
+            length = nativeMax(args.length - start, 0),
+            rest = Array(length);
+
+        while (++index < length) {
+          rest[index] = args[start + index];
+        }
+        switch (start) {
+          case 0: return func.call(this, rest);
+          case 1: return func.call(this, args[0], rest);
+          case 2: return func.call(this, args[0], args[1], rest);
+        }
+        var otherArgs = Array(start + 1);
+        index = -1;
+        while (++index < start) {
+          otherArgs[index] = args[index];
+        }
+        otherArgs[start] = rest;
+        return func.apply(this, otherArgs);
+      };
+    }
+
+    /**
+     * Creates a function that invokes `func` with the `this` binding of the created
+     * function and an array of arguments much like [`Function#apply`](https://es5.github.io/#x15.3.4.3).
+     *
+     * **Note:** This method is based on the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator).
      *
      * @static
      * @memberOf _
      * @category Function
      * @param {Function} func The function to spread arguments over.
-     * @returns {*} Returns the new function.
+     * @returns {Function} Returns the new function.
      * @example
      *
-     * var spread = _.spread(function(who, what) {
+     * var say = _.spread(function(who, what) {
      *   return who + ' says ' + what;
      * });
      *
-     * spread(['Fred', 'hello']);
-     * // => 'Fred says hello'
+     * say(['fred', 'hello']);
+     * // => 'fred says hello'
      *
      * // with a Promise
      * var numbers = Promise.all([
@@ -8123,12 +8333,12 @@ process.umask = function() { return 0; };
      * cloning is handled by the method instead. The `customizer` is bound to
      * `thisArg` and invoked with two argument; (value [, index|key, object]).
      *
-     * **Note:** This method is loosely based on the structured clone algorithm.
+     * **Note:** This method is loosely based on the
+     * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
      * The enumerable properties of `arguments` objects and objects created by
      * constructors other than `Object` are cloned to plain `Object` objects. An
      * empty object is returned for uncloneable values such as functions, DOM nodes,
-     * Maps, Sets, and WeakMaps. See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
-     * for more details.
+     * Maps, Sets, and WeakMaps.
      *
      * @static
      * @memberOf _
@@ -8186,12 +8396,12 @@ process.umask = function() { return 0; };
      * is handled by the method instead. The `customizer` is bound to `thisArg`
      * and invoked with two argument; (value [, index|key, object]).
      *
-     * **Note:** This method is loosely based on the structured clone algorithm.
+     * **Note:** This method is loosely based on the
+     * [structured clone algorithm](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm).
      * The enumerable properties of `arguments` objects and objects created by
      * constructors other than `Object` are cloned to plain `Object` objects. An
      * empty object is returned for uncloneable values such as functions, DOM nodes,
-     * Maps, Sets, and WeakMaps. See the [HTML5 specification](http://www.w3.org/TR/html5/infrastructure.html#internal-structured-cloning-algorithm)
-     * for more details.
+     * Maps, Sets, and WeakMaps.
      *
      * @static
      * @memberOf _
@@ -8248,7 +8458,7 @@ process.umask = function() { return 0; };
      */
     function isArguments(value) {
       var length = isObjectLike(value) ? value.length : undefined;
-      return (isLength(length) && objToString.call(value) == argsTag) || false;
+      return isLength(length) && objToString.call(value) == argsTag;
     }
 
     /**
@@ -8268,7 +8478,7 @@ process.umask = function() { return 0; };
      * // => false
      */
     var isArray = nativeIsArray || function(value) {
-      return (isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag) || false;
+      return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
     };
 
     /**
@@ -8288,7 +8498,7 @@ process.umask = function() { return 0; };
      * // => false
      */
     function isBoolean(value) {
-      return (value === true || value === false || isObjectLike(value) && objToString.call(value) == boolTag) || false;
+      return value === true || value === false || (isObjectLike(value) && objToString.call(value) == boolTag);
     }
 
     /**
@@ -8308,7 +8518,7 @@ process.umask = function() { return 0; };
      * // => false
      */
     function isDate(value) {
-      return (isObjectLike(value) && objToString.call(value) == dateTag) || false;
+      return isObjectLike(value) && objToString.call(value) == dateTag;
     }
 
     /**
@@ -8328,13 +8538,13 @@ process.umask = function() { return 0; };
      * // => false
      */
     function isElement(value) {
-      return (value && value.nodeType === 1 && isObjectLike(value) &&
-        (objToString.call(value).indexOf('Element') > -1)) || false;
+      return !!value && value.nodeType === 1 && isObjectLike(value) &&
+        (objToString.call(value).indexOf('Element') > -1);
     }
     // Fallback for environments without DOM support.
     if (!support.dom) {
       isElement = function(value) {
-        return (value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value)) || false;
+        return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
       };
     }
 
@@ -8382,7 +8592,7 @@ process.umask = function() { return 0; };
      * equivalent. If `customizer` is provided it is invoked to compare values.
      * If `customizer` returns `undefined` comparisons are handled by the method
      * instead. The `customizer` is bound to `thisArg` and invoked with three
-     * arguments; (value, other [, index|key]).
+     * arguments: (value, other [, index|key]).
      *
      * **Note:** This method supports comparing arrays, booleans, `Date` objects,
      * numbers, `Object` objects, regexes, and strings. Objects are compared by
@@ -8447,15 +8657,13 @@ process.umask = function() { return 0; };
      * // => false
      */
     function isError(value) {
-      return (isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag) || false;
+      return isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag;
     }
 
     /**
      * Checks if `value` is a finite primitive number.
      *
-     * **Note:** This method is based on ES `Number.isFinite`. See the
-     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite)
-     * for more details.
+     * **Note:** This method is based on [`Number.isFinite`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite).
      *
      * @static
      * @memberOf _
@@ -8507,10 +8715,8 @@ process.umask = function() { return 0; };
     };
 
     /**
-     * Checks if `value` is the language type of `Object`.
+     * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
      * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-     *
-     * **Note:** See the [ES5 spec](https://es5.github.io/#x8) for more details.
      *
      * @static
      * @memberOf _
@@ -8532,7 +8738,7 @@ process.umask = function() { return 0; };
       // Avoid a V8 JIT bug in Chrome 19-20.
       // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
       var type = typeof value;
-      return type == 'function' || (value && type == 'object') || false;
+      return type == 'function' || (!!value && type == 'object');
     }
 
     /**
@@ -8540,7 +8746,7 @@ process.umask = function() { return 0; };
      * `object` contains equivalent property values. If `customizer` is provided
      * it is invoked to compare values. If `customizer` returns `undefined`
      * comparisons are handled by the method instead. The `customizer` is bound
-     * to `thisArg` and invoked with three arguments; (value, other, index|key).
+     * to `thisArg` and invoked with three arguments: (value, other, index|key).
      *
      * **Note:** This method supports comparing properties of arrays, booleans,
      * `Date` objects, numbers, `Object` objects, regexes, and strings. Functions
@@ -8578,13 +8784,19 @@ process.umask = function() { return 0; };
       var props = keys(source),
           length = props.length;
 
+      if (!length) {
+        return true;
+      }
+      if (object == null) {
+        return false;
+      }
       customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
       if (!customizer && length == 1) {
         var key = props[0],
             value = source[key];
 
         if (isStrictComparable(value)) {
-          return object != null && value === object[key] && hasOwnProperty.call(object, key);
+          return value === object[key] && (typeof value != 'undefined' || (key in toObject(object)));
         }
       }
       var values = Array(length),
@@ -8594,15 +8806,14 @@ process.umask = function() { return 0; };
         value = values[length] = source[props[length]];
         strictCompareFlags[length] = isStrictComparable(value);
       }
-      return baseIsMatch(object, props, values, strictCompareFlags, customizer);
+      return baseIsMatch(toObject(object), props, values, strictCompareFlags, customizer);
     }
 
     /**
      * Checks if `value` is `NaN`.
      *
-     * **Note:** This method is not the same as native `isNaN` which returns `true`
-     * for `undefined` and other non-numeric values. See the [ES5 spec](https://es5.github.io/#x15.1.2.4)
-     * for more details.
+     * **Note:** This method is not the same as [`isNaN`](https://es5.github.io/#x15.1.2.4)
+     * which returns `true` for `undefined` and other non-numeric values.
      *
      * @static
      * @memberOf _
@@ -8652,7 +8863,7 @@ process.umask = function() { return 0; };
       if (objToString.call(value) == funcTag) {
         return reNative.test(fnToString.call(value));
       }
-      return (isObjectLike(value) && reHostCtor.test(value)) || false;
+      return isObjectLike(value) && reHostCtor.test(value);
     }
 
     /**
@@ -8698,7 +8909,7 @@ process.umask = function() { return 0; };
      * // => false
      */
     function isNumber(value) {
-      return typeof value == 'number' || (isObjectLike(value) && objToString.call(value) == numberTag) || false;
+      return typeof value == 'number' || (isObjectLike(value) && objToString.call(value) == numberTag);
     }
 
     /**
@@ -8780,7 +8991,7 @@ process.umask = function() { return 0; };
      * // => false
      */
     function isString(value) {
-      return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag) || false;
+      return typeof value == 'string' || (isObjectLike(value) && objToString.call(value) == stringTag);
     }
 
     /**
@@ -8800,7 +9011,7 @@ process.umask = function() { return 0; };
      * // => false
      */
     function isTypedArray(value) {
-      return (isObjectLike(value) && isLength(value.length) && typedArrayTags[objToString.call(value)]) || false;
+      return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
     }
 
     /**
@@ -8882,7 +9093,7 @@ process.umask = function() { return 0; };
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources overwrite property assignments of previous sources.
      * If `customizer` is provided it is invoked to produce the assigned values.
-     * The `customizer` is bound to `thisArg` and invoked with five arguments;
+     * The `customizer` is bound to `thisArg` and invoked with five arguments:
      * (objectValue, sourceValue, key, object, source).
      *
      * @static
@@ -8967,18 +9178,18 @@ process.umask = function() { return 0; };
      * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
      * // => { 'user': 'barney', 'age': 36 }
      */
-    function defaults(object) {
+    var defaults = restParam(function(args) {
+      var object = args[0];
       if (object == null) {
         return object;
       }
-      var args = arrayCopy(arguments);
       args.push(assignDefaults);
       return assign.apply(undefined, args);
-    }
+    });
 
     /**
-     * This method is like `_.findIndex` except that it returns the key of the
-     * first element `predicate` returns truthy for, instead of the element itself.
+     * This method is like `_.find` except that it returns the key of the first
+     * element `predicate` returns truthy for instead of the element itself.
      *
      * If a property name is provided for `predicate` the created `_.property`
      * style callback returns the property value of the given element.
@@ -9024,10 +9235,7 @@ process.umask = function() { return 0; };
      * _.findKey(users, 'active');
      * // => 'barney'
      */
-    function findKey(object, predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-      return baseFind(object, predicate, baseForOwn, true);
-    }
+    var findKey = createFindKey(baseForOwn);
 
     /**
      * This method is like `_.findKey` except that it iterates over elements of
@@ -9077,15 +9285,12 @@ process.umask = function() { return 0; };
      * _.findLastKey(users, 'active');
      * // => 'pebbles'
      */
-    function findLastKey(object, predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-      return baseFind(object, predicate, baseForOwnRight, true);
-    }
+    var findLastKey = createFindKey(baseForOwnRight);
 
     /**
      * Iterates over own and inherited enumerable properties of an object invoking
      * `iteratee` for each property. The `iteratee` is bound to `thisArg` and invoked
-     * with three arguments; (value, key, object). Iterator functions may exit
+     * with three arguments: (value, key, object). Iterator functions may exit
      * iteration early by explicitly returning `false`.
      *
      * @static
@@ -9109,12 +9314,7 @@ process.umask = function() { return 0; };
      * });
      * // => logs 'a', 'b', and 'c' (iteration order is not guaranteed)
      */
-    function forIn(object, iteratee, thisArg) {
-      if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
-        iteratee = bindCallback(iteratee, thisArg, 3);
-      }
-      return baseFor(object, iteratee, keysIn);
-    }
+    var forIn = createForIn(baseFor);
 
     /**
      * This method is like `_.forIn` except that it iterates over properties of
@@ -9141,15 +9341,12 @@ process.umask = function() { return 0; };
      * });
      * // => logs 'c', 'b', and 'a' assuming `_.forIn ` logs 'a', 'b', and 'c'
      */
-    function forInRight(object, iteratee, thisArg) {
-      iteratee = bindCallback(iteratee, thisArg, 3);
-      return baseForRight(object, iteratee, keysIn);
-    }
+    var forInRight = createForIn(baseForRight);
 
     /**
      * Iterates over own enumerable properties of an object invoking `iteratee`
      * for each property. The `iteratee` is bound to `thisArg` and invoked with
-     * three arguments; (value, key, object). Iterator functions may exit iteration
+     * three arguments: (value, key, object). Iterator functions may exit iteration
      * early by explicitly returning `false`.
      *
      * @static
@@ -9173,12 +9370,7 @@ process.umask = function() { return 0; };
      * });
      * // => logs 'a' and 'b' (iteration order is not guaranteed)
      */
-    function forOwn(object, iteratee, thisArg) {
-      if (typeof iteratee != 'function' || typeof thisArg != 'undefined') {
-        iteratee = bindCallback(iteratee, thisArg, 3);
-      }
-      return baseForOwn(object, iteratee);
-    }
+    var forOwn = createForOwn(baseForOwn);
 
     /**
      * This method is like `_.forOwn` except that it iterates over properties of
@@ -9205,10 +9397,7 @@ process.umask = function() { return 0; };
      * });
      * // => logs 'b' and 'a' assuming `_.forOwn` logs 'a' and 'b'
      */
-    function forOwnRight(object, iteratee, thisArg) {
-      iteratee = bindCallback(iteratee, thisArg, 3);
-      return baseForRight(object, iteratee, keys);
-    }
+    var forOwnRight = createForOwn(baseForOwnRight);
 
     /**
      * Creates an array of function property names from all enumerable properties,
@@ -9393,7 +9582,7 @@ process.umask = function() { return 0; };
     /**
      * Creates an object with the same keys as `object` and values generated by
      * running each own enumerable property of `object` through `iteratee`. The
-     * iteratee function is bound to `thisArg` and invoked with three arguments;
+     * iteratee function is bound to `thisArg` and invoked with three arguments:
      * (value, key, object).
      *
      * If a property name is provided for `iteratee` the created `_.property`
@@ -9448,7 +9637,7 @@ process.umask = function() { return 0; };
      * provided it is invoked to produce the merged values of the destination and
      * source properties. If `customizer` returns `undefined` merging is handled
      * by the method instead. The `customizer` is bound to `thisArg` and invoked
-     * with five arguments; (objectValue, sourceValue, key, object, source).
+     * with five arguments: (objectValue, sourceValue, key, object, source).
      *
      * @static
      * @memberOf _
@@ -9497,7 +9686,7 @@ process.umask = function() { return 0; };
      * Property names may be specified as individual arguments or as arrays of
      * property names. If `predicate` is provided it is invoked for each property
      * of `object` omitting the properties `predicate` returns truthy for. The
-     * predicate is bound to `thisArg` and invoked with three arguments;
+     * predicate is bound to `thisArg` and invoked with three arguments:
      * (value, key, object).
      *
      * @static
@@ -9519,19 +9708,19 @@ process.umask = function() { return 0; };
      * _.omit(object, _.isNumber);
      * // => { 'user': 'fred' }
      */
-    function omit(object, predicate, thisArg) {
+    var omit = restParam(function(object, props) {
       if (object == null) {
         return {};
       }
-      if (typeof predicate != 'function') {
-        var props = arrayMap(baseFlatten(arguments, false, false, 1), String);
+      if (typeof props[0] != 'function') {
+        var props = arrayMap(baseFlatten(props), String);
         return pickByArray(object, baseDifference(keysIn(object), props));
       }
-      predicate = bindCallback(predicate, thisArg, 3);
+      var predicate = bindCallback(props[0], props[1], 3);
       return pickByCallback(object, function(value, key, object) {
         return !predicate(value, key, object);
       });
-    }
+    });
 
     /**
      * Creates a two dimensional array of the key-value pairs for `object`,
@@ -9565,7 +9754,7 @@ process.umask = function() { return 0; };
      * names may be specified as individual arguments or as arrays of property
      * names. If `predicate` is provided it is invoked for each property of `object`
      * picking the properties `predicate` returns truthy for. The predicate is
-     * bound to `thisArg` and invoked with three arguments; (value, key, object).
+     * bound to `thisArg` and invoked with three arguments: (value, key, object).
      *
      * @static
      * @memberOf _
@@ -9586,14 +9775,14 @@ process.umask = function() { return 0; };
      * _.pick(object, _.isString);
      * // => { 'user': 'fred' }
      */
-    function pick(object, predicate, thisArg) {
+    var pick = restParam(function(object, props) {
       if (object == null) {
         return {};
       }
-      return typeof predicate == 'function'
-        ? pickByCallback(object, bindCallback(predicate, thisArg, 3))
-        : pickByArray(object, baseFlatten(arguments, false, false, 1));
-    }
+      return typeof props[0] == 'function'
+        ? pickByCallback(object, bindCallback(props[0], props[1], 3))
+        : pickByArray(object, baseFlatten(props));
+    });
 
     /**
      * Resolves the value of property `key` on `object`. If the value of `key` is
@@ -9638,7 +9827,7 @@ process.umask = function() { return 0; };
      * `accumulator` object which is the result of running each of its own enumerable
      * properties through `iteratee`, with each invocation potentially mutating
      * the `accumulator` object. The `iteratee` is bound to `thisArg` and invoked
-     * with four arguments; (accumulator, value, key, object). Iterator functions
+     * with four arguments: (accumulator, value, key, object). Iterator functions
      * may exit iteration early by explicitly returning `false`.
      *
      * @static
@@ -9849,8 +10038,7 @@ process.umask = function() { return 0; };
     /*------------------------------------------------------------------------*/
 
     /**
-     * Converts `string` to camel case.
-     * See [Wikipedia](https://en.wikipedia.org/wiki/CamelCase) for more details.
+     * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
      *
      * @static
      * @memberOf _
@@ -9892,9 +10080,8 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Deburrs `string` by converting latin-1 supplementary letters to basic latin letters.
-     * See [Wikipedia](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
-     * for more details.
+     * Deburrs `string` by converting [latin-1 supplementary letters](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
+     * to basic latin letters and removing [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
      *
      * @static
      * @memberOf _
@@ -9908,7 +10095,7 @@ process.umask = function() { return 0; };
      */
     function deburr(string) {
       string = baseToString(string);
-      return string && string.replace(reLatin1, deburrLetter);
+      return string && string.replace(reLatin1, deburrLetter).replace(reComboMarks, '');
     }
 
     /**
@@ -9963,9 +10150,8 @@ process.umask = function() { return 0; };
      * [#108](https://html5sec.org/#108), and [#133](https://html5sec.org/#133) of
      * the [HTML5 Security Cheatsheet](https://html5sec.org/) for more details.
      *
-     * When working with HTML you should always quote attribute values to reduce
-     * XSS vectors. See [Ryan Grove's article](http://wonko.com/post/html-escaping)
-     * for more details.
+     * When working with HTML you should always [quote attribute values](http://wonko.com/post/html-escaping)
+     * to reduce XSS vectors.
      *
      * @static
      * @memberOf _
@@ -9986,8 +10172,8 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Escapes the `RegExp` special characters "\", "^", "$", ".", "|", "?", "*",
-     * "+", "(", ")", "[", "]", "{" and "}" in `string`.
+     * Escapes the `RegExp` special characters "\", "/", "^", "$", ".", "|", "?",
+     * "*", "+", "(", ")", "[", "]", "{" and "}" in `string`.
      *
      * @static
      * @memberOf _
@@ -9997,7 +10183,7 @@ process.umask = function() { return 0; };
      * @example
      *
      * _.escapeRegExp('[lodash](https://lodash.com/)');
-     * // => '\[lodash\]\(https://lodash\.com/\)'
+     * // => '\[lodash\]\(https:\/\/lodash\.com\/\)'
      */
     function escapeRegExp(string) {
       string = baseToString(string);
@@ -10007,9 +10193,7 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Converts `string` to kebab case.
-     * See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) for
-     * more details.
+     * Converts `string` to [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).
      *
      * @static
      * @memberOf _
@@ -10032,9 +10216,8 @@ process.umask = function() { return 0; };
     });
 
     /**
-     * Pads `string` on the left and right sides if it is shorter then the given
-     * padding length. The `chars` string may be truncated if the number of padding
-     * characters can't be evenly divided by the padding length.
+     * Pads `string` on the left and right sides if it is shorter than `length`.
+     * Padding characters are truncated if they can't be evenly divided by `length`.
      *
      * @static
      * @memberOf _
@@ -10066,14 +10249,13 @@ process.umask = function() { return 0; };
           leftLength = floor(mid),
           rightLength = ceil(mid);
 
-      chars = createPad('', rightLength, chars);
+      chars = createPadding('', rightLength, chars);
       return chars.slice(0, leftLength) + string + chars;
     }
 
     /**
-     * Pads `string` on the left side if it is shorter then the given padding
-     * length. The `chars` string may be truncated if the number of padding
-     * characters exceeds the padding length.
+     * Pads `string` on the left side if it is shorter than `length`. Padding
+     * characters are truncated if they exceed `length`.
      *
      * @static
      * @memberOf _
@@ -10093,15 +10275,11 @@ process.umask = function() { return 0; };
      * _.padLeft('abc', 3);
      * // => 'abc'
      */
-    function padLeft(string, length, chars) {
-      string = baseToString(string);
-      return string && (createPad(string, length, chars) + string);
-    }
+    var padLeft = createPadDir();
 
     /**
-     * Pads `string` on the right side if it is shorter then the given padding
-     * length. The `chars` string may be truncated if the number of padding
-     * characters exceeds the padding length.
+     * Pads `string` on the right side if it is shorter than `length`. Padding
+     * characters are truncated if they exceed `length`.
      *
      * @static
      * @memberOf _
@@ -10121,18 +10299,15 @@ process.umask = function() { return 0; };
      * _.padRight('abc', 3);
      * // => 'abc'
      */
-    function padRight(string, length, chars) {
-      string = baseToString(string);
-      return string && (string + createPad(string, length, chars));
-    }
+    var padRight = createPadDir(true);
 
     /**
      * Converts `string` to an integer of the specified radix. If `radix` is
      * `undefined` or `0`, a `radix` of `10` is used unless `value` is a hexadecimal,
      * in which case a `radix` of `16` is used.
      *
-     * **Note:** This method aligns with the ES5 implementation of `parseInt`.
-     * See the [ES5 spec](https://es5.github.io/#E) for more details.
+     * **Note:** This method aligns with the [ES5 implementation](https://es5.github.io/#E)
+     * of `parseInt`.
      *
      * @static
      * @memberOf _
@@ -10212,8 +10387,7 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * Converts `string` to snake case.
-     * See [Wikipedia](https://en.wikipedia.org/wiki/Snake_case) for more details.
+     * Converts `string` to [snake case](https://en.wikipedia.org/wiki/Snake_case).
      *
      * @static
      * @memberOf _
@@ -10236,9 +10410,7 @@ process.umask = function() { return 0; };
     });
 
     /**
-     * Converts `string` to start case.
-     * See [Wikipedia](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage)
-     * for more details.
+     * Converts `string` to [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
      *
      * @static
      * @memberOf _
@@ -10297,9 +10469,9 @@ process.umask = function() { return 0; };
      * properties may be accessed as free variables in the template. If a setting
      * object is provided it takes precedence over `_.templateSettings` values.
      *
-     * **Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
-     * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
-     * for more details.
+     * **Note:** In the development build `_.template` utilizes
+     * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
+     * for easier debugging.
      *
      * For more information on precompiling templates see
      * [lodash's custom builds documentation](https://lodash.com/custom-builds).
@@ -10511,7 +10683,7 @@ process.umask = function() { return 0; };
      * // => 'abc'
      *
      * _.map(['  foo  ', '  bar  '], _.trim);
-     * // => ['foo', 'bar]
+     * // => ['foo', 'bar']
      */
     function trim(string, chars, guard) {
       var value = string;
@@ -10619,7 +10791,7 @@ process.umask = function() { return 0; };
      *   'length': 24,
      *   'separator': /,? +/
      * });
-     * //=> 'hi-diddly-ho there...'
+     * // => 'hi-diddly-ho there...'
      *
      * _.trunc('hi-diddly-ho there, neighborino', {
      *   'omission': ' [...]'
@@ -10738,7 +10910,7 @@ process.umask = function() { return 0; };
      * @static
      * @memberOf _
      * @category Utility
-     * @param {*} func The function to attempt.
+     * @param {Function} func The function to attempt.
      * @returns {*} Returns the `func` result or error object.
      * @example
      *
@@ -10751,20 +10923,13 @@ process.umask = function() { return 0; };
      *   elements = [];
      * }
      */
-    function attempt() {
-      var func = arguments[0],
-          length = arguments.length,
-          args = Array(length ? (length - 1) : 0);
-
-      while (--length > 0) {
-        args[length - 1] = arguments[length];
-      }
+    var attempt = restParam(function(func, args) {
       try {
         return func.apply(undefined, args);
       } catch(e) {
         return isError(e) ? e : new Error(e);
       }
-    }
+    });
 
     /**
      * Creates a function that invokes `func` with the `this` binding of `thisArg`
@@ -10901,12 +11066,11 @@ process.umask = function() { return 0; };
      *
      * var users = [
      *   { 'user': 'barney' },
-     *   { 'user': 'fred' },
-     *   { 'user': 'pebbles' }
+     *   { 'user': 'fred' }
      * ];
      *
      * _.find(users, _.matchesProperty('user', 'fred'));
-     * // => { 'user': 'fred', 'age': 40 }
+     * // => { 'user': 'fred' }
      */
     function matchesProperty(key, value) {
       return baseMatchesProperty(key + '', baseClone(value, true));
@@ -10916,6 +11080,9 @@ process.umask = function() { return 0; };
      * Adds all own enumerable function properties of a source object to the
      * destination object. If `object` is a function then methods are added to
      * its prototype as well.
+     *
+     * **Note:** Use `_.runInContext` to create a pristine `lodash` function
+     * for mixins to avoid conflicts caused by modifying the original.
      *
      * @static
      * @memberOf _
@@ -10934,7 +11101,7 @@ process.umask = function() { return 0; };
      *   });
      * }
      *
-     * // use `_.runInContext` to avoid potential conflicts (esp. in Node.js)
+     * // use `_.runInContext` to avoid conflicts (esp. in Node.js)
      * var _ = require('lodash').runInContext();
      *
      * _.mixin({ 'vowels': vowels });
@@ -10984,12 +11151,10 @@ process.umask = function() { return 0; };
             return function() {
               var chainAll = this.__chain__;
               if (chain || chainAll) {
-                var result = object(this.__wrapped__);
-                (result.__actions__ = arrayCopy(this.__actions__)).push({
-                  'func': func,
-                  'args': arguments,
-                  'thisArg': object
-                });
+                var result = object(this.__wrapped__),
+                    actions = result.__actions__ = arrayCopy(this.__actions__);
+
+                actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
                 result.__chain__ = chainAll;
                 return result;
               }
@@ -11056,7 +11221,7 @@ process.umask = function() { return 0; };
      * var getName = _.property('user');
      *
      * _.map(users, getName);
-     * // => ['fred', barney']
+     * // => ['fred', 'barney']
      *
      * _.pluck(_.sortBy(users, getName), 'user');
      * // => ['barney', 'fred']
@@ -11066,7 +11231,7 @@ process.umask = function() { return 0; };
     }
 
     /**
-     * The inverse of `_.property`; this method creates a function which returns
+     * The opposite of `_.property`; this method creates a function which returns
      * the property value of a given key on `object`.
      *
      * @static
@@ -11244,16 +11409,16 @@ process.umask = function() { return 0; };
      * `-Infinity` is returned. If an iteratee function is provided it is invoked
      * for each value in `collection` to generate the criterion by which the value
      * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
-     * arguments; (value, index, collection).
+     * arguments: (value, index, collection).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
@@ -11280,11 +11445,11 @@ process.umask = function() { return 0; };
      * _.max(users, function(chr) {
      *   return chr.age;
      * });
-     * // => { 'user': 'fred', 'age': 40 };
+     * // => { 'user': 'fred', 'age': 40 }
      *
      * // using the `_.property` callback shorthand
      * _.max(users, 'age');
-     * // => { 'user': 'fred', 'age': 40 };
+     * // => { 'user': 'fred', 'age': 40 }
      */
     var max = createExtremum(arrayMax);
 
@@ -11293,16 +11458,16 @@ process.umask = function() { return 0; };
      * `Infinity` is returned. If an iteratee function is provided it is invoked
      * for each value in `collection` to generate the criterion by which the value
      * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
-     * arguments; (value, index, collection).
+     * arguments: (value, index, collection).
      *
-     * If a property name is provided for `predicate` the created `_.property`
+     * If a property name is provided for `iteratee` the created `_.property`
      * style callback returns the property value of the given element.
      *
      * If a value is also provided for `thisArg` the created `_.matchesProperty`
      * style callback returns `true` for elements that have a matching property
      * value, else `false`.
      *
-     * If an object is provided for `predicate` the created `_.matches` style
+     * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
      *
@@ -11329,11 +11494,11 @@ process.umask = function() { return 0; };
      * _.min(users, function(chr) {
      *   return chr.age;
      * });
-     * // => { 'user': 'barney', 'age': 36 };
+     * // => { 'user': 'barney', 'age': 36 }
      *
      * // using the `_.property` callback shorthand
      * _.min(users, 'age');
-     * // => { 'user': 'barney', 'age': 36 };
+     * // => { 'user': 'barney', 'age': 36 }
      */
     var min = createExtremum(arrayMin, true);
 
@@ -11344,26 +11509,45 @@ process.umask = function() { return 0; };
      * @memberOf _
      * @category Math
      * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
      * @returns {number} Returns the sum.
      * @example
      *
-     * _.sum([4, 6, 2]);
-     * // => 12
+     * _.sum([4, 6]);
+     * // => 10
      *
-     * _.sum({ 'a': 4, 'b': 6, 'c': 2 });
-     * // => 12
+     * _.sum({ 'a': 4, 'b': 6 });
+     * // => 10
+     *
+     * var objects = [
+     *   { 'n': 4 },
+     *   { 'n': 6 }
+     * ];
+     *
+     * _.sum(objects, function(object) {
+     *   return object.n;
+     * });
+     * // => 10
+     *
+     * // using the `_.property` callback shorthand
+     * _.sum(objects, 'n');
+     * // => 10
      */
-    function sum(collection) {
-      if (!isArray(collection)) {
-        collection = toIterable(collection);
+    function sum(collection, iteratee, thisArg) {
+      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
+        iteratee = null;
       }
-      var length = collection.length,
-          result = 0;
+      var func = getCallback(),
+          noIteratee = iteratee == null;
 
-      while (length--) {
-        result += +collection[length] || 0;
+      if (!(func === baseCallback && noIteratee)) {
+        noIteratee = false;
+        iteratee = func(iteratee, thisArg, 3);
       }
-      return result;
+      return noIteratee
+        ? arraySum(isArray(collection) ? collection : toIterable(collection))
+        : baseSum(collection, iteratee);
     }
 
     /*------------------------------------------------------------------------*/
@@ -11462,6 +11646,7 @@ process.umask = function() { return 0; };
     lodash.reject = reject;
     lodash.remove = remove;
     lodash.rest = rest;
+    lodash.restParam = restParam;
     lodash.shuffle = shuffle;
     lodash.slice = slice;
     lodash.sortBy = sortBy;
@@ -11753,8 +11938,11 @@ process.umask = function() { return 0; };
 
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var lodashFunc = lodash[methodName],
-          checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
+      var lodashFunc = lodash[methodName];
+      if (!lodashFunc) {
+        return;
+      }
+      var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
           retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
@@ -11812,6 +12000,19 @@ process.umask = function() { return 0; };
         });
       };
     });
+
+    // Map minified function names to their real names.
+    baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+      var lodashFunc = lodash[methodName];
+      if (lodashFunc) {
+        var key = lodashFunc.name,
+            names = realNames[key] || (realNames[key] = []);
+
+        names.push({ 'name': methodName, 'func': lodashFunc });
+      }
+    });
+
+    realNames[createHybridWrapper(null, BIND_KEY_FLAG).name] = [{ 'name': 'wrapper', 'func': null }];
 
     // Add functions to the lazy wrapper.
     LazyWrapper.prototype.clone = lazyClone;
@@ -11872,7 +12073,7 @@ process.umask = function() { return 0; };
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -11899,7 +12100,7 @@ var AutoFocusMixin = {
 
 module.exports = AutoFocusMixin;
 
-},{"./focusNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/focusNode.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/BeforeInputEventPlugin.js":[function(require,module,exports){
+},{"./focusNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/focusNode.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/BeforeInputEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015 Facebook, Inc.
  * All rights reserved.
@@ -12394,7 +12595,7 @@ var BeforeInputEventPlugin = {
 
 module.exports = BeforeInputEventPlugin;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./FallbackCompositionState":"/Users/9dots/Repositories/react-test/node_modules/react/lib/FallbackCompositionState.js","./SyntheticCompositionEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticCompositionEvent.js","./SyntheticInputEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticInputEvent.js","./keyOf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/CSSProperty.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./FallbackCompositionState":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/FallbackCompositionState.js","./SyntheticCompositionEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticCompositionEvent.js","./SyntheticInputEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticInputEvent.js","./keyOf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CSSProperty.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12515,7 +12716,7 @@ var CSSProperty = {
 
 module.exports = CSSProperty;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/CSSPropertyOperations.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CSSPropertyOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -12697,7 +12898,7 @@ var CSSPropertyOperations = {
 module.exports = CSSPropertyOperations;
 
 }).call(this,require('_process'))
-},{"./CSSProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/CSSProperty.js","./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./camelizeStyleName":"/Users/9dots/Repositories/react-test/node_modules/react/lib/camelizeStyleName.js","./dangerousStyleValue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/dangerousStyleValue.js","./hyphenateStyleName":"/Users/9dots/Repositories/react-test/node_modules/react/lib/hyphenateStyleName.js","./memoizeStringOnly":"/Users/9dots/Repositories/react-test/node_modules/react/lib/memoizeStringOnly.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/CallbackQueue.js":[function(require,module,exports){
+},{"./CSSProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CSSProperty.js","./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./camelizeStyleName":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/camelizeStyleName.js","./dangerousStyleValue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/dangerousStyleValue.js","./hyphenateStyleName":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/hyphenateStyleName.js","./memoizeStringOnly":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/memoizeStringOnly.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CallbackQueue.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -12797,7 +12998,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 module.exports = CallbackQueue;
 
 }).call(this,require('_process'))
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ChangeEventPlugin.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ChangeEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13179,7 +13380,7 @@ var ChangeEventPlugin = {
 
 module.exports = ChangeEventPlugin;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginHub.js","./EventPropagators":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./SyntheticEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js","./isEventSupported":"/Users/9dots/Repositories/react-test/node_modules/react/lib/isEventSupported.js","./isTextInputElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ClientReactRootIndex.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginHub.js","./EventPropagators":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./SyntheticEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js","./isEventSupported":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isEventSupported.js","./isTextInputElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ClientReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13204,7 +13405,7 @@ var ClientReactRootIndex = {
 
 module.exports = ClientReactRootIndex;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMChildrenOperations.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMChildrenOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13342,7 +13543,7 @@ var DOMChildrenOperations = {
 module.exports = DOMChildrenOperations;
 
 }).call(this,require('_process'))
-},{"./Danger":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Danger.js","./ReactMultiChildUpdateTypes":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./setTextContent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/setTextContent.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMProperty.js":[function(require,module,exports){
+},{"./Danger":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Danger.js","./ReactMultiChildUpdateTypes":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./setTextContent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/setTextContent.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMProperty.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13641,7 +13842,7 @@ var DOMProperty = {
 module.exports = DOMProperty;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13833,7 +14034,7 @@ var DOMPropertyOperations = {
 module.exports = DOMPropertyOperations;
 
 }).call(this,require('_process'))
-},{"./DOMProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./quoteAttributeValueForBrowser":"/Users/9dots/Repositories/react-test/node_modules/react/lib/quoteAttributeValueForBrowser.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/Danger.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./quoteAttributeValueForBrowser":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/quoteAttributeValueForBrowser.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Danger.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14020,7 +14221,7 @@ var Danger = {
 module.exports = Danger;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./createNodesFromMarkup":"/Users/9dots/Repositories/react-test/node_modules/react/lib/createNodesFromMarkup.js","./emptyFunction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js","./getMarkupWrap":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/DefaultEventPluginOrder.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./createNodesFromMarkup":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/createNodesFromMarkup.js","./emptyFunction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js","./getMarkupWrap":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DefaultEventPluginOrder.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14059,7 +14260,7 @@ var DefaultEventPluginOrder = [
 
 module.exports = DefaultEventPluginOrder;
 
-},{"./keyOf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/EnterLeaveEventPlugin.js":[function(require,module,exports){
+},{"./keyOf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EnterLeaveEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14199,7 +14400,7 @@ var EnterLeaveEventPlugin = {
 
 module.exports = EnterLeaveEventPlugin;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./SyntheticMouseEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js","./keyOf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./SyntheticMouseEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js","./keyOf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14271,7 +14472,7 @@ var EventConstants = {
 
 module.exports = EventConstants;
 
-},{"./keyMirror":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyMirror.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventListener.js":[function(require,module,exports){
+},{"./keyMirror":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyMirror.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventListener.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14361,7 +14562,7 @@ var EventListener = {
 module.exports = EventListener;
 
 }).call(this,require('_process'))
-},{"./emptyFunction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginHub.js":[function(require,module,exports){
+},{"./emptyFunction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginHub.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14639,7 +14840,7 @@ var EventPluginHub = {
 module.exports = EventPluginHub;
 
 }).call(this,require('_process'))
-},{"./EventPluginRegistry":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginRegistry.js","./EventPluginUtils":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginUtils.js","./accumulateInto":"/Users/9dots/Repositories/react-test/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/9dots/Repositories/react-test/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginRegistry.js":[function(require,module,exports){
+},{"./EventPluginRegistry":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginRegistry.js","./EventPluginUtils":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginUtils.js","./accumulateInto":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginRegistry.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14919,7 +15120,7 @@ var EventPluginRegistry = {
 module.exports = EventPluginRegistry;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginUtils.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginUtils.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15140,7 +15341,7 @@ var EventPluginUtils = {
 module.exports = EventPluginUtils;
 
 }).call(this,require('_process'))
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPropagators.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPropagators.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15282,7 +15483,7 @@ var EventPropagators = {
 module.exports = EventPropagators;
 
 }).call(this,require('_process'))
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginHub.js","./accumulateInto":"/Users/9dots/Repositories/react-test/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/9dots/Repositories/react-test/node_modules/react/lib/forEachAccumulated.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginHub.js","./accumulateInto":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/forEachAccumulated.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15326,7 +15527,7 @@ var ExecutionEnvironment = {
 
 module.exports = ExecutionEnvironment;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/FallbackCompositionState.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/FallbackCompositionState.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15417,7 +15618,7 @@ PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
 
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./getTextContentAccessor":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/HTMLDOMPropertyConfig.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./getTextContentAccessor":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/HTMLDOMPropertyConfig.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15622,7 +15823,7 @@ var HTMLDOMPropertyConfig = {
 
 module.exports = HTMLDOMPropertyConfig;
 
-},{"./DOMProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/LinkedValueUtils.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/LinkedValueUtils.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15778,7 +15979,7 @@ var LinkedValueUtils = {
 module.exports = LinkedValueUtils;
 
 }).call(this,require('_process'))
-},{"./ReactPropTypes":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypes.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/LocalEventTrapMixin.js":[function(require,module,exports){
+},{"./ReactPropTypes":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypes.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/LocalEventTrapMixin.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -15835,7 +16036,7 @@ var LocalEventTrapMixin = {
 module.exports = LocalEventTrapMixin;
 
 }).call(this,require('_process'))
-},{"./ReactBrowserEventEmitter":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./accumulateInto":"/Users/9dots/Repositories/react-test/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/9dots/Repositories/react-test/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/MobileSafariClickEventPlugin.js":[function(require,module,exports){
+},{"./ReactBrowserEventEmitter":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./accumulateInto":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/accumulateInto.js","./forEachAccumulated":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/forEachAccumulated.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/MobileSafariClickEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15893,7 +16094,7 @@ var MobileSafariClickEventPlugin = {
 
 module.exports = MobileSafariClickEventPlugin;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./emptyFunction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./emptyFunction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -15942,7 +16143,7 @@ function assign(target, sources) {
 
 module.exports = assign;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16058,7 +16259,7 @@ var PooledClass = {
 module.exports = PooledClass;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/React.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/React.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16210,7 +16411,7 @@ React.version = '0.13.1';
 module.exports = React;
 
 }).call(this,require('_process'))
-},{"./EventPluginUtils":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginUtils.js","./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactChildren":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactChildren.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponent.js","./ReactContext":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactDOM":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOM.js","./ReactDOMTextComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDefaultInjection":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDefaultInjection.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceHandles":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactPropTypes":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypes.js","./ReactReconciler":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./ReactServerRendering":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactServerRendering.js","./findDOMNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/findDOMNode.js","./onlyChild":"/Users/9dots/Repositories/react-test/node_modules/react/lib/onlyChild.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js":[function(require,module,exports){
+},{"./EventPluginUtils":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginUtils.js","./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactChildren":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactChildren.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponent.js","./ReactContext":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactDOM":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOM.js","./ReactDOMTextComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDefaultInjection":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDefaultInjection.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceHandles":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactPropTypes":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypes.js","./ReactReconciler":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./ReactServerRendering":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactServerRendering.js","./findDOMNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/findDOMNode.js","./onlyChild":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/onlyChild.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16241,7 +16442,7 @@ var ReactBrowserComponentMixin = {
 
 module.exports = ReactBrowserComponentMixin;
 
-},{"./findDOMNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/findDOMNode.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js":[function(require,module,exports){
+},{"./findDOMNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/findDOMNode.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16594,7 +16795,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
 
 module.exports = ReactBrowserEventEmitter;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginHub.js","./EventPluginRegistry":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginRegistry.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactEventEmitterMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactEventEmitterMixin.js","./ViewportMetrics":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ViewportMetrics.js","./isEventSupported":"/Users/9dots/Repositories/react-test/node_modules/react/lib/isEventSupported.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactChildReconciler.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPluginHub":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginHub.js","./EventPluginRegistry":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginRegistry.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactEventEmitterMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactEventEmitterMixin.js","./ViewportMetrics":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ViewportMetrics.js","./isEventSupported":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isEventSupported.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactChildReconciler.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -16721,7 +16922,7 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 
-},{"./ReactReconciler":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./flattenChildren":"/Users/9dots/Repositories/react-test/node_modules/react/lib/flattenChildren.js","./instantiateReactComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/instantiateReactComponent.js","./shouldUpdateReactComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/shouldUpdateReactComponent.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactChildren.js":[function(require,module,exports){
+},{"./ReactReconciler":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./flattenChildren":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/flattenChildren.js","./instantiateReactComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/instantiateReactComponent.js","./shouldUpdateReactComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/shouldUpdateReactComponent.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16874,7 +17075,7 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 }).call(this,require('_process'))
-},{"./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactFragment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactFragment.js","./traverseAllChildren":"/Users/9dots/Repositories/react-test/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js":[function(require,module,exports){
+},{"./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactFragment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactFragment.js","./traverseAllChildren":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17820,7 +18021,7 @@ var ReactClass = {
 module.exports = ReactClass;
 
 }).call(this,require('_process'))
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponent.js","./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactErrorUtils":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactErrorUtils.js","./ReactInstanceMap":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactLifeCycle.js","./ReactPropTypeLocationNames":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocations.js","./ReactUpdateQueue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./keyMirror":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyMirror.js","./keyOf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponent.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponent.js","./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactErrorUtils":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactErrorUtils.js","./ReactInstanceMap":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactLifeCycle.js","./ReactPropTypeLocationNames":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocations.js","./ReactUpdateQueue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./keyMirror":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyMirror.js","./keyOf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17956,7 +18157,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactComponent;
 
 }).call(this,require('_process'))
-},{"./ReactUpdateQueue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponentBrowserEnvironment.js":[function(require,module,exports){
+},{"./ReactUpdateQueue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdateQueue.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponentBrowserEnvironment.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18003,7 +18204,7 @@ var ReactComponentBrowserEnvironment = {
 
 module.exports = ReactComponentBrowserEnvironment;
 
-},{"./ReactDOMIDOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMIDOperations.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponentEnvironment.js":[function(require,module,exports){
+},{"./ReactDOMIDOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMIDOperations.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponentEnvironment.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -18064,7 +18265,7 @@ var ReactComponentEnvironment = {
 module.exports = ReactComponentEnvironment;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCompositeComponent.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCompositeComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18954,7 +19155,7 @@ var ReactCompositeComponent = {
 module.exports = ReactCompositeComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactComponentEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponentEnvironment.js","./ReactContext":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceMap":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactLifeCycle.js","./ReactNativeComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactPropTypeLocationNames":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocations.js","./ReactReconciler":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./emptyObject":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyObject.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./shouldUpdateReactComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactContext.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactComponentEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponentEnvironment.js","./ReactContext":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./ReactInstanceMap":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactLifeCycle.js","./ReactNativeComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactPropTypeLocationNames":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocations.js","./ReactReconciler":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./emptyObject":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyObject.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./shouldUpdateReactComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactContext.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19032,7 +19233,7 @@ var ReactContext = {
 module.exports = ReactContext;
 
 }).call(this,require('_process'))
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./emptyObject":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyObject.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./emptyObject":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyObject.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19066,7 +19267,7 @@ var ReactCurrentOwner = {
 
 module.exports = ReactCurrentOwner;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOM.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOM.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19244,7 +19445,7 @@ var ReactDOM = mapObject({
 module.exports = ReactDOM;
 
 }).call(this,require('_process'))
-},{"./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./mapObject":"/Users/9dots/Repositories/react-test/node_modules/react/lib/mapObject.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMButton.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./mapObject":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/mapObject.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMButton.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19308,7 +19509,7 @@ var ReactDOMButton = ReactClass.createClass({
 
 module.exports = ReactDOMButton;
 
-},{"./AutoFocusMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js","./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./keyMirror":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyMirror.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMComponent.js":[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js","./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./keyMirror":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyMirror.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19814,7 +20015,7 @@ ReactDOMComponent.injection = {
 module.exports = ReactDOMComponent;
 
 }).call(this,require('_process'))
-},{"./CSSPropertyOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/CSSPropertyOperations.js","./DOMProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./DOMPropertyOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactBrowserEventEmitter":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactComponentBrowserEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactMultiChild":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMultiChild.js","./ReactPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./escapeTextContentForBrowser":"/Users/9dots/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./isEventSupported":"/Users/9dots/Repositories/react-test/node_modules/react/lib/isEventSupported.js","./keyOf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMForm.js":[function(require,module,exports){
+},{"./CSSPropertyOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CSSPropertyOperations.js","./DOMProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./DOMPropertyOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactBrowserEventEmitter":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactComponentBrowserEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactMultiChild":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMultiChild.js","./ReactPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./escapeTextContentForBrowser":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./isEventSupported":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isEventSupported.js","./keyOf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMForm.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19863,7 +20064,7 @@ var ReactDOMForm = ReactClass.createClass({
 
 module.exports = ReactDOMForm;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMIDOperations.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMIDOperations.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20031,7 +20232,7 @@ ReactPerf.measureMethods(ReactDOMIDOperations, 'ReactDOMIDOperations', {
 module.exports = ReactDOMIDOperations;
 
 }).call(this,require('_process'))
-},{"./CSSPropertyOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/CSSPropertyOperations.js","./DOMChildrenOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMChildrenOperations.js","./DOMPropertyOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/9dots/Repositories/react-test/node_modules/react/lib/setInnerHTML.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMIframe.js":[function(require,module,exports){
+},{"./CSSPropertyOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CSSPropertyOperations.js","./DOMChildrenOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMChildrenOperations.js","./DOMPropertyOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/setInnerHTML.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMIframe.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20076,7 +20277,7 @@ var ReactDOMIframe = ReactClass.createClass({
 
 module.exports = ReactDOMIframe;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMImg.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMImg.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20122,7 +20323,7 @@ var ReactDOMImg = ReactClass.createClass({
 
 module.exports = ReactDOMImg;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMInput.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./LocalEventTrapMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/LocalEventTrapMixin.js","./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMInput.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20299,7 +20500,7 @@ var ReactDOMInput = ReactClass.createClass({
 module.exports = ReactDOMInput;
 
 }).call(this,require('_process'))
-},{"./AutoFocusMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/9dots/Repositories/react-test/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMOption.js":[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMOption.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20351,7 +20552,7 @@ var ReactDOMOption = ReactClass.createClass({
 module.exports = ReactDOMOption;
 
 }).call(this,require('_process'))
-},{"./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMSelect.js":[function(require,module,exports){
+},{"./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMSelect.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20529,7 +20730,7 @@ var ReactDOMSelect = ReactClass.createClass({
 
 module.exports = ReactDOMSelect;
 
-},{"./AutoFocusMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js","./LinkedValueUtils":"/Users/9dots/Repositories/react-test/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMSelection.js":[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js","./LinkedValueUtils":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMSelection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20742,7 +20943,7 @@ var ReactDOMSelection = {
 
 module.exports = ReactDOMSelection;
 
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./getNodeForCharacterOffset":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getNodeForCharacterOffset.js","./getTextContentAccessor":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMTextComponent.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./getNodeForCharacterOffset":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getNodeForCharacterOffset.js","./getTextContentAccessor":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getTextContentAccessor.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMTextComponent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20859,7 +21060,7 @@ assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 
-},{"./DOMPropertyOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactComponentBrowserEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMComponent.js","./escapeTextContentForBrowser":"/Users/9dots/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMTextarea.js":[function(require,module,exports){
+},{"./DOMPropertyOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactComponentBrowserEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMComponent.js","./escapeTextContentForBrowser":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMTextarea.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20999,7 +21200,7 @@ var ReactDOMTextarea = ReactClass.createClass({
 module.exports = ReactDOMTextarea;
 
 }).call(this,require('_process'))
-},{"./AutoFocusMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/9dots/Repositories/react-test/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDefaultBatchingStrategy.js":[function(require,module,exports){
+},{"./AutoFocusMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/AutoFocusMixin.js","./DOMPropertyOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMPropertyOperations.js","./LinkedValueUtils":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/LinkedValueUtils.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDefaultBatchingStrategy.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21072,7 +21273,7 @@ var ReactDefaultBatchingStrategy = {
 
 module.exports = ReactDefaultBatchingStrategy;
 
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./Transaction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDefaultInjection.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./Transaction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDefaultInjection.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21231,7 +21432,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./BeforeInputEventPlugin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/BeforeInputEventPlugin.js","./ChangeEventPlugin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ChangeEventPlugin.js","./ClientReactRootIndex":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ClientReactRootIndex.js","./DefaultEventPluginOrder":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DefaultEventPluginOrder.js","./EnterLeaveEventPlugin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EnterLeaveEventPlugin.js","./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./HTMLDOMPropertyConfig":"/Users/9dots/Repositories/react-test/node_modules/react/lib/HTMLDOMPropertyConfig.js","./MobileSafariClickEventPlugin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/MobileSafariClickEventPlugin.js","./ReactBrowserComponentMixin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactComponentBrowserEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMButton":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMButton.js","./ReactDOMComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMComponent.js","./ReactDOMForm":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMForm.js","./ReactDOMIDOperations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMIDOperations.js","./ReactDOMIframe":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMIframe.js","./ReactDOMImg":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMImg.js","./ReactDOMInput":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMInput.js","./ReactDOMOption":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMOption.js","./ReactDOMSelect":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMSelect.js","./ReactDOMTextComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDOMTextarea":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMTextarea.js","./ReactDefaultBatchingStrategy":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDefaultBatchingStrategy.js","./ReactDefaultPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDefaultPerf.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactEventListener":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactEventListener.js","./ReactInjection":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInjection.js","./ReactInstanceHandles":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactReconcileTransaction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconcileTransaction.js","./SVGDOMPropertyConfig":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SVGDOMPropertyConfig.js","./SelectEventPlugin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SelectEventPlugin.js","./ServerReactRootIndex":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ServerReactRootIndex.js","./SimpleEventPlugin":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SimpleEventPlugin.js","./createFullPageComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/createFullPageComponent.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDefaultPerf.js":[function(require,module,exports){
+},{"./BeforeInputEventPlugin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/BeforeInputEventPlugin.js","./ChangeEventPlugin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ChangeEventPlugin.js","./ClientReactRootIndex":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ClientReactRootIndex.js","./DefaultEventPluginOrder":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DefaultEventPluginOrder.js","./EnterLeaveEventPlugin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EnterLeaveEventPlugin.js","./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./HTMLDOMPropertyConfig":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/HTMLDOMPropertyConfig.js","./MobileSafariClickEventPlugin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/MobileSafariClickEventPlugin.js","./ReactBrowserComponentMixin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserComponentMixin.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactComponentBrowserEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponentBrowserEnvironment.js","./ReactDOMButton":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMButton.js","./ReactDOMComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMComponent.js","./ReactDOMForm":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMForm.js","./ReactDOMIDOperations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMIDOperations.js","./ReactDOMIframe":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMIframe.js","./ReactDOMImg":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMImg.js","./ReactDOMInput":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMInput.js","./ReactDOMOption":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMOption.js","./ReactDOMSelect":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMSelect.js","./ReactDOMTextComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMTextComponent.js","./ReactDOMTextarea":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMTextarea.js","./ReactDefaultBatchingStrategy":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDefaultBatchingStrategy.js","./ReactDefaultPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDefaultPerf.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactEventListener":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactEventListener.js","./ReactInjection":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInjection.js","./ReactInstanceHandles":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactReconcileTransaction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconcileTransaction.js","./SVGDOMPropertyConfig":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SVGDOMPropertyConfig.js","./SelectEventPlugin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SelectEventPlugin.js","./ServerReactRootIndex":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ServerReactRootIndex.js","./SimpleEventPlugin":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SimpleEventPlugin.js","./createFullPageComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/createFullPageComponent.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDefaultPerf.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21497,7 +21698,7 @@ var ReactDefaultPerf = {
 
 module.exports = ReactDefaultPerf;
 
-},{"./DOMProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./ReactDefaultPerfAnalysis":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDefaultPerfAnalysis.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./performanceNow":"/Users/9dots/Repositories/react-test/node_modules/react/lib/performanceNow.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDefaultPerfAnalysis.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./ReactDefaultPerfAnalysis":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDefaultPerfAnalysis.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./performanceNow":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/performanceNow.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDefaultPerfAnalysis.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21703,7 +21904,7 @@ var ReactDefaultPerfAnalysis = {
 
 module.exports = ReactDefaultPerfAnalysis;
 
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22011,7 +22212,7 @@ ReactElement.isValidElement = function(object) {
 module.exports = ReactElement;
 
 }).call(this,require('_process'))
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactContext":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactContext":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactContext.js","./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22476,7 +22677,7 @@ var ReactElementValidator = {
 module.exports = ReactElementValidator;
 
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactFragment.js","./ReactNativeComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js","./ReactPropTypeLocationNames":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocations.js","./getIteratorFn":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactEmptyComponent.js":[function(require,module,exports){
+},{"./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactFragment.js","./ReactNativeComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js","./ReactPropTypeLocationNames":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js","./ReactPropTypeLocations":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocations.js","./getIteratorFn":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactEmptyComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22571,7 +22772,7 @@ var ReactEmptyComponent = {
 module.exports = ReactEmptyComponent;
 
 }).call(this,require('_process'))
-},{"./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactErrorUtils.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactErrorUtils.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22603,7 +22804,7 @@ var ReactErrorUtils = {
 
 module.exports = ReactErrorUtils;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactEventEmitterMixin.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactEventEmitterMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22653,7 +22854,7 @@ var ReactEventEmitterMixin = {
 
 module.exports = ReactEventEmitterMixin;
 
-},{"./EventPluginHub":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginHub.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactEventListener.js":[function(require,module,exports){
+},{"./EventPluginHub":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginHub.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactEventListener.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22836,7 +23037,7 @@ var ReactEventListener = {
 
 module.exports = ReactEventListener;
 
-},{"./EventListener":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventListener.js","./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactInstanceHandles":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./getEventTarget":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventTarget.js","./getUnboundedScrollPosition":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getUnboundedScrollPosition.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactFragment.js":[function(require,module,exports){
+},{"./EventListener":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventListener.js","./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactInstanceHandles":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./getEventTarget":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventTarget.js","./getUnboundedScrollPosition":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getUnboundedScrollPosition.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactFragment.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -23021,7 +23222,7 @@ var ReactFragment = {
 module.exports = ReactFragment;
 
 }).call(this,require('_process'))
-},{"./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInjection.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInjection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23063,7 +23264,7 @@ var ReactInjection = {
 
 module.exports = ReactInjection;
 
-},{"./DOMProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./EventPluginHub":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginHub.js","./ReactBrowserEventEmitter":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactComponentEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponentEnvironment.js","./ReactDOMComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMComponent.js","./ReactEmptyComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactRootIndex":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactRootIndex.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInputSelection.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./EventPluginHub":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginHub.js","./ReactBrowserEventEmitter":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactComponentEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponentEnvironment.js","./ReactDOMComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMComponent.js","./ReactEmptyComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js","./ReactPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactRootIndex":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactRootIndex.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInputSelection.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23198,7 +23399,7 @@ var ReactInputSelection = {
 
 module.exports = ReactInputSelection;
 
-},{"./ReactDOMSelection":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactDOMSelection.js","./containsNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/containsNode.js","./focusNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/focusNode.js","./getActiveElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getActiveElement.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js":[function(require,module,exports){
+},{"./ReactDOMSelection":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactDOMSelection.js","./containsNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/containsNode.js","./focusNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/focusNode.js","./getActiveElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getActiveElement.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23534,7 +23735,7 @@ var ReactInstanceHandles = {
 module.exports = ReactInstanceHandles;
 
 }).call(this,require('_process'))
-},{"./ReactRootIndex":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactRootIndex.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js":[function(require,module,exports){
+},{"./ReactRootIndex":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactRootIndex.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23583,7 +23784,7 @@ var ReactInstanceMap = {
 
 module.exports = ReactInstanceMap;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactLifeCycle.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactLifeCycle.js":[function(require,module,exports){
 /**
  * Copyright 2015, Facebook, Inc.
  * All rights reserved.
@@ -23620,7 +23821,7 @@ var ReactLifeCycle = {
 
 module.exports = ReactLifeCycle;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMarkupChecksum.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMarkupChecksum.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23668,7 +23869,7 @@ var ReactMarkupChecksum = {
 
 module.exports = ReactMarkupChecksum;
 
-},{"./adler32":"/Users/9dots/Repositories/react-test/node_modules/react/lib/adler32.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js":[function(require,module,exports){
+},{"./adler32":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/adler32.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24559,7 +24760,7 @@ ReactPerf.measureMethods(ReactMount, 'ReactMount', {
 module.exports = ReactMount;
 
 }).call(this,require('_process'))
-},{"./DOMProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./ReactBrowserEventEmitter":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./ReactEmptyComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactEmptyComponent.js","./ReactInstanceHandles":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactInstanceMap":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactMarkupChecksum":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMarkupChecksum.js","./ReactPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./ReactUpdateQueue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdateQueue.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./containsNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/containsNode.js","./emptyObject":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyObject.js","./getReactRootElementInContainer":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getReactRootElementInContainer.js","./instantiateReactComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/9dots/Repositories/react-test/node_modules/react/lib/setInnerHTML.js","./shouldUpdateReactComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMultiChild.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMProperty.js","./ReactBrowserEventEmitter":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactElementValidator":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./ReactEmptyComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactEmptyComponent.js","./ReactInstanceHandles":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactInstanceMap":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactMarkupChecksum":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMarkupChecksum.js","./ReactPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./ReactUpdateQueue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdateQueue.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./containsNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/containsNode.js","./emptyObject":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyObject.js","./getReactRootElementInContainer":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getReactRootElementInContainer.js","./instantiateReactComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./setInnerHTML":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/setInnerHTML.js","./shouldUpdateReactComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/shouldUpdateReactComponent.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMultiChild.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24989,7 +25190,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 
-},{"./ReactChildReconciler":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactChildReconciler.js","./ReactComponentEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactComponentEnvironment.js","./ReactMultiChildUpdateTypes":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./ReactReconciler":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconciler.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMultiChildUpdateTypes.js":[function(require,module,exports){
+},{"./ReactChildReconciler":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactChildReconciler.js","./ReactComponentEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactComponentEnvironment.js","./ReactMultiChildUpdateTypes":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMultiChildUpdateTypes.js","./ReactReconciler":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconciler.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMultiChildUpdateTypes.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25022,7 +25223,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 
 module.exports = ReactMultiChildUpdateTypes;
 
-},{"./keyMirror":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyMirror.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js":[function(require,module,exports){
+},{"./keyMirror":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyMirror.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -25129,7 +25330,7 @@ var ReactNativeComponent = {
 module.exports = ReactNativeComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactOwner.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactOwner.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25241,7 +25442,7 @@ var ReactOwner = {
 module.exports = ReactOwner;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25345,7 +25546,7 @@ function _noMeasure(objName, fnName, func) {
 module.exports = ReactPerf;
 
 }).call(this,require('_process'))
-},{"_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js":[function(require,module,exports){
+},{"_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25373,7 +25574,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactPropTypeLocationNames;
 
 }).call(this,require('_process'))
-},{"_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocations.js":[function(require,module,exports){
+},{"_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocations.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25397,7 +25598,7 @@ var ReactPropTypeLocations = keyMirror({
 
 module.exports = ReactPropTypeLocations;
 
-},{"./keyMirror":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyMirror.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypes.js":[function(require,module,exports){
+},{"./keyMirror":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyMirror.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypes.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25746,7 +25947,7 @@ function getPreciseType(propValue) {
 
 module.exports = ReactPropTypes;
 
-},{"./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactFragment.js","./ReactPropTypeLocationNames":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js","./emptyFunction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPutListenerQueue.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactFragment.js","./ReactPropTypeLocationNames":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPropTypeLocationNames.js","./emptyFunction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPutListenerQueue.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25802,7 +26003,7 @@ PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 module.exports = ReactPutListenerQueue;
 
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconcileTransaction.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconcileTransaction.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25978,7 +26179,7 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 
-},{"./CallbackQueue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactInputSelection":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInputSelection.js","./ReactPutListenerQueue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Transaction.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconciler.js":[function(require,module,exports){
+},{"./CallbackQueue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactBrowserEventEmitter":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactBrowserEventEmitter.js","./ReactInputSelection":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInputSelection.js","./ReactPutListenerQueue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Transaction.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconciler.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26102,7 +26303,7 @@ var ReactReconciler = {
 module.exports = ReactReconciler;
 
 }).call(this,require('_process'))
-},{"./ReactElementValidator":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./ReactRef":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactRef.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactRef.js":[function(require,module,exports){
+},{"./ReactElementValidator":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElementValidator.js","./ReactRef":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactRef.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactRef.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26173,7 +26374,7 @@ ReactRef.detachRefs = function(instance, element) {
 
 module.exports = ReactRef;
 
-},{"./ReactOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactOwner.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactRootIndex.js":[function(require,module,exports){
+},{"./ReactOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactOwner.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26204,7 +26405,7 @@ var ReactRootIndex = {
 
 module.exports = ReactRootIndex;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactServerRendering.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactServerRendering.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26286,7 +26487,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactInstanceHandles":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactMarkupChecksum":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMarkupChecksum.js","./ReactServerRenderingTransaction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactServerRenderingTransaction.js","./emptyObject":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyObject.js","./instantiateReactComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactServerRenderingTransaction.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactInstanceHandles":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./ReactMarkupChecksum":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMarkupChecksum.js","./ReactServerRenderingTransaction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactServerRenderingTransaction.js","./emptyObject":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyObject.js","./instantiateReactComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/instantiateReactComponent.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactServerRenderingTransaction.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -26399,7 +26600,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 
-},{"./CallbackQueue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactPutListenerQueue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdateQueue.js":[function(require,module,exports){
+},{"./CallbackQueue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactPutListenerQueue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPutListenerQueue.js","./Transaction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Transaction.js","./emptyFunction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdateQueue.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -26698,7 +26899,7 @@ var ReactUpdateQueue = {
 module.exports = ReactUpdateQueue;
 
 }).call(this,require('_process'))
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactLifeCycle.js","./ReactUpdates":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactUpdates.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactInstanceMap":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactLifeCycle":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactLifeCycle.js","./ReactUpdates":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactUpdates.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26980,7 +27181,7 @@ var ReactUpdates = {
 module.exports = ReactUpdates;
 
 }).call(this,require('_process'))
-},{"./CallbackQueue":"/Users/9dots/Repositories/react-test/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactPerf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./Transaction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Transaction.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SVGDOMPropertyConfig.js":[function(require,module,exports){
+},{"./CallbackQueue":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CallbackQueue.js","./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactPerf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactPerf.js","./ReactReconciler":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactReconciler.js","./Transaction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Transaction.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SVGDOMPropertyConfig.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27072,7 +27273,7 @@ var SVGDOMPropertyConfig = {
 
 module.exports = SVGDOMPropertyConfig;
 
-},{"./DOMProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/DOMProperty.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SelectEventPlugin.js":[function(require,module,exports){
+},{"./DOMProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/DOMProperty.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SelectEventPlugin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27267,7 +27468,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./ReactInputSelection":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInputSelection.js","./SyntheticEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js","./getActiveElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getActiveElement.js","./isTextInputElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js","./shallowEqual":"/Users/9dots/Repositories/react-test/node_modules/react/lib/shallowEqual.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ServerReactRootIndex.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPropagators":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./ReactInputSelection":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInputSelection.js","./SyntheticEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js","./getActiveElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getActiveElement.js","./isTextInputElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isTextInputElement.js","./keyOf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js","./shallowEqual":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/shallowEqual.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ServerReactRootIndex.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27298,7 +27499,7 @@ var ServerReactRootIndex = {
 
 module.exports = ServerReactRootIndex;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SimpleEventPlugin.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SimpleEventPlugin.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -27726,7 +27927,7 @@ var SimpleEventPlugin = {
 module.exports = SimpleEventPlugin;
 
 }).call(this,require('_process'))
-},{"./EventConstants":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPluginUtils":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPluginUtils.js","./EventPropagators":"/Users/9dots/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./SyntheticClipboardEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticClipboardEvent.js","./SyntheticDragEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticDragEvent.js","./SyntheticEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js","./SyntheticFocusEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticFocusEvent.js","./SyntheticKeyboardEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticKeyboardEvent.js","./SyntheticMouseEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js","./SyntheticTouchEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticTouchEvent.js","./SyntheticUIEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js","./SyntheticWheelEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticWheelEvent.js","./getEventCharCode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventCharCode.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./keyOf":"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticClipboardEvent.js":[function(require,module,exports){
+},{"./EventConstants":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventConstants.js","./EventPluginUtils":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPluginUtils.js","./EventPropagators":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/EventPropagators.js","./SyntheticClipboardEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticClipboardEvent.js","./SyntheticDragEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticDragEvent.js","./SyntheticEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js","./SyntheticFocusEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticFocusEvent.js","./SyntheticKeyboardEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticKeyboardEvent.js","./SyntheticMouseEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js","./SyntheticTouchEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticTouchEvent.js","./SyntheticUIEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js","./SyntheticWheelEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticWheelEvent.js","./getEventCharCode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventCharCode.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./keyOf":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticClipboardEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27771,7 +27972,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
 
-},{"./SyntheticEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticCompositionEvent.js":[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticCompositionEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27816,7 +28017,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticCompositionEvent;
 
-},{"./SyntheticEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticDragEvent.js":[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticDragEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27855,7 +28056,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
 
-},{"./SyntheticMouseEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js":[function(require,module,exports){
+},{"./SyntheticMouseEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28021,7 +28222,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.threeArgumentPooler);
 
 module.exports = SyntheticEvent;
 
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/PooledClass.js","./emptyFunction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js","./getEventTarget":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventTarget.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticFocusEvent.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./PooledClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/PooledClass.js","./emptyFunction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js","./getEventTarget":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventTarget.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticFocusEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28060,7 +28261,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
 
-},{"./SyntheticUIEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticInputEvent.js":[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticInputEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28106,7 +28307,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticInputEvent;
 
-},{"./SyntheticEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticKeyboardEvent.js":[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticKeyboardEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28193,7 +28394,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
 
-},{"./SyntheticUIEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js","./getEventCharCode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventCharCode.js","./getEventKey":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventKey.js","./getEventModifierState":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventModifierState.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js":[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js","./getEventCharCode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventCharCode.js","./getEventKey":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventKey.js","./getEventModifierState":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventModifierState.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28274,7 +28475,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
 
-},{"./SyntheticUIEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js","./ViewportMetrics":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ViewportMetrics.js","./getEventModifierState":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventModifierState.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticTouchEvent.js":[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js","./ViewportMetrics":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ViewportMetrics.js","./getEventModifierState":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventModifierState.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticTouchEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28322,7 +28523,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
 
-},{"./SyntheticUIEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js","./getEventModifierState":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventModifierState.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js":[function(require,module,exports){
+},{"./SyntheticUIEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js","./getEventModifierState":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventModifierState.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticUIEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28384,7 +28585,7 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
 
-},{"./SyntheticEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js","./getEventTarget":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventTarget.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticWheelEvent.js":[function(require,module,exports){
+},{"./SyntheticEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticEvent.js","./getEventTarget":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventTarget.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticWheelEvent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28445,7 +28646,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
 
-},{"./SyntheticMouseEvent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/Transaction.js":[function(require,module,exports){
+},{"./SyntheticMouseEvent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/SyntheticMouseEvent.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Transaction.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -28686,7 +28887,7 @@ var Transaction = {
 module.exports = Transaction;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/ViewportMetrics.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ViewportMetrics.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28715,7 +28916,7 @@ var ViewportMetrics = {
 
 module.exports = ViewportMetrics;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/accumulateInto.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/accumulateInto.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -28781,7 +28982,7 @@ function accumulateInto(current, next) {
 module.exports = accumulateInto;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/adler32.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/adler32.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28815,7 +29016,7 @@ function adler32(data) {
 
 module.exports = adler32;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/camelize.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/camelize.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28847,7 +29048,7 @@ function camelize(string) {
 
 module.exports = camelize;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/camelizeStyleName.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/camelizeStyleName.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -28889,7 +29090,7 @@ function camelizeStyleName(string) {
 
 module.exports = camelizeStyleName;
 
-},{"./camelize":"/Users/9dots/Repositories/react-test/node_modules/react/lib/camelize.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/containsNode.js":[function(require,module,exports){
+},{"./camelize":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/camelize.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/containsNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28933,7 +29134,7 @@ function containsNode(outerNode, innerNode) {
 
 module.exports = containsNode;
 
-},{"./isTextNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/isTextNode.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/createArrayFromMixed.js":[function(require,module,exports){
+},{"./isTextNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isTextNode.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/createArrayFromMixed.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29019,7 +29220,7 @@ function createArrayFromMixed(obj) {
 
 module.exports = createArrayFromMixed;
 
-},{"./toArray":"/Users/9dots/Repositories/react-test/node_modules/react/lib/toArray.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/createFullPageComponent.js":[function(require,module,exports){
+},{"./toArray":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/toArray.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/createFullPageComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29081,7 +29282,7 @@ function createFullPageComponent(tag) {
 module.exports = createFullPageComponent;
 
 }).call(this,require('_process'))
-},{"./ReactClass":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/createNodesFromMarkup.js":[function(require,module,exports){
+},{"./ReactClass":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactClass.js","./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/createNodesFromMarkup.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29171,7 +29372,7 @@ function createNodesFromMarkup(markup, handleScript) {
 module.exports = createNodesFromMarkup;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./createArrayFromMixed":"/Users/9dots/Repositories/react-test/node_modules/react/lib/createArrayFromMixed.js","./getMarkupWrap":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/dangerousStyleValue.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./createArrayFromMixed":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/createArrayFromMixed.js","./getMarkupWrap":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getMarkupWrap.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/dangerousStyleValue.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29229,7 +29430,7 @@ function dangerousStyleValue(name, value) {
 
 module.exports = dangerousStyleValue;
 
-},{"./CSSProperty":"/Users/9dots/Repositories/react-test/node_modules/react/lib/CSSProperty.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js":[function(require,module,exports){
+},{"./CSSProperty":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/CSSProperty.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29263,7 +29464,7 @@ emptyFunction.thatReturnsArgument = function(arg) { return arg; };
 
 module.exports = emptyFunction;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyObject.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyObject.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29287,7 +29488,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = emptyObject;
 
 }).call(this,require('_process'))
-},{"_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js":[function(require,module,exports){
+},{"_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29327,7 +29528,7 @@ function escapeTextContentForBrowser(text) {
 
 module.exports = escapeTextContentForBrowser;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/findDOMNode.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/findDOMNode.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29400,7 +29601,7 @@ function findDOMNode(componentOrElement) {
 module.exports = findDOMNode;
 
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactInstanceMap":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactMount":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactMount.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./isNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/isNode.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/flattenChildren.js":[function(require,module,exports){
+},{"./ReactCurrentOwner":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCurrentOwner.js","./ReactInstanceMap":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceMap.js","./ReactMount":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactMount.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./isNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isNode.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/flattenChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29458,7 +29659,7 @@ function flattenChildren(children) {
 module.exports = flattenChildren;
 
 }).call(this,require('_process'))
-},{"./traverseAllChildren":"/Users/9dots/Repositories/react-test/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/focusNode.js":[function(require,module,exports){
+},{"./traverseAllChildren":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/traverseAllChildren.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/focusNode.js":[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -29487,7 +29688,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/forEachAccumulated.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/forEachAccumulated.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29518,7 +29719,7 @@ var forEachAccumulated = function(arr, cb, scope) {
 
 module.exports = forEachAccumulated;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getActiveElement.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getActiveElement.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29547,7 +29748,7 @@ function getActiveElement() /*?DOMElement*/ {
 
 module.exports = getActiveElement;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventCharCode.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventCharCode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29599,7 +29800,7 @@ function getEventCharCode(nativeEvent) {
 
 module.exports = getEventCharCode;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventKey.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventKey.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29704,7 +29905,7 @@ function getEventKey(nativeEvent) {
 
 module.exports = getEventKey;
 
-},{"./getEventCharCode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventCharCode.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventModifierState.js":[function(require,module,exports){
+},{"./getEventCharCode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventCharCode.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventModifierState.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29751,7 +29952,7 @@ function getEventModifierState(nativeEvent) {
 
 module.exports = getEventModifierState;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getEventTarget.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getEventTarget.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29782,7 +29983,7 @@ function getEventTarget(nativeEvent) {
 
 module.exports = getEventTarget;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getIteratorFn.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getIteratorFn.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29826,7 +30027,7 @@ function getIteratorFn(maybeIterable) {
 
 module.exports = getIteratorFn;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getMarkupWrap.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getMarkupWrap.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29943,7 +30144,7 @@ function getMarkupWrap(nodeName) {
 module.exports = getMarkupWrap;
 
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getNodeForCharacterOffset.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getNodeForCharacterOffset.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30018,7 +30219,7 @@ function getNodeForCharacterOffset(root, offset) {
 
 module.exports = getNodeForCharacterOffset;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getReactRootElementInContainer.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getReactRootElementInContainer.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30053,7 +30254,7 @@ function getReactRootElementInContainer(container) {
 
 module.exports = getReactRootElementInContainer;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getTextContentAccessor.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getTextContentAccessor.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30090,7 +30291,7 @@ function getTextContentAccessor() {
 
 module.exports = getTextContentAccessor;
 
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/getUnboundedScrollPosition.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getUnboundedScrollPosition.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30130,7 +30331,7 @@ function getUnboundedScrollPosition(scrollable) {
 
 module.exports = getUnboundedScrollPosition;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/hyphenate.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/hyphenate.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30163,7 +30364,7 @@ function hyphenate(string) {
 
 module.exports = hyphenate;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/hyphenateStyleName.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/hyphenateStyleName.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30204,7 +30405,7 @@ function hyphenateStyleName(string) {
 
 module.exports = hyphenateStyleName;
 
-},{"./hyphenate":"/Users/9dots/Repositories/react-test/node_modules/react/lib/hyphenate.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/instantiateReactComponent.js":[function(require,module,exports){
+},{"./hyphenate":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/hyphenate.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/instantiateReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30341,7 +30542,7 @@ function instantiateReactComponent(node, parentCompositeType) {
 module.exports = instantiateReactComponent;
 
 }).call(this,require('_process'))
-},{"./Object.assign":"/Users/9dots/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactCompositeComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactCompositeComponent.js","./ReactEmptyComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js":[function(require,module,exports){
+},{"./Object.assign":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/Object.assign.js","./ReactCompositeComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactCompositeComponent.js","./ReactEmptyComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactEmptyComponent.js","./ReactNativeComponent":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactNativeComponent.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30398,7 +30599,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require('_process'))
-},{"_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/isEventSupported.js":[function(require,module,exports){
+},{"_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isEventSupported.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30463,7 +30664,7 @@ function isEventSupported(eventNameSuffix, capture) {
 
 module.exports = isEventSupported;
 
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/isNode.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30490,7 +30691,7 @@ function isNode(object) {
 
 module.exports = isNode;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/isTextInputElement.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isTextInputElement.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30533,7 +30734,7 @@ function isTextInputElement(elem) {
 
 module.exports = isTextInputElement;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/isTextNode.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isTextNode.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30558,7 +30759,7 @@ function isTextNode(object) {
 
 module.exports = isTextNode;
 
-},{"./isNode":"/Users/9dots/Repositories/react-test/node_modules/react/lib/isNode.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyMirror.js":[function(require,module,exports){
+},{"./isNode":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/isNode.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyMirror.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30613,7 +30814,7 @@ var keyMirror = function(obj) {
 module.exports = keyMirror;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/keyOf.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/keyOf.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30649,7 +30850,7 @@ var keyOf = function(oneKeyObj) {
 
 module.exports = keyOf;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/mapObject.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/mapObject.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30702,7 +30903,7 @@ function mapObject(object, callback, context) {
 
 module.exports = mapObject;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/memoizeStringOnly.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/memoizeStringOnly.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30735,7 +30936,7 @@ function memoizeStringOnly(callback) {
 
 module.exports = memoizeStringOnly;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/onlyChild.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/onlyChild.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30775,7 +30976,7 @@ function onlyChild(children) {
 module.exports = onlyChild;
 
 }).call(this,require('_process'))
-},{"./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/performance.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/performance.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30803,7 +31004,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = performance || {};
 
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/performanceNow.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/performanceNow.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30831,7 +31032,7 @@ var performanceNow = performance.now.bind(performance);
 
 module.exports = performanceNow;
 
-},{"./performance":"/Users/9dots/Repositories/react-test/node_modules/react/lib/performance.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/quoteAttributeValueForBrowser.js":[function(require,module,exports){
+},{"./performance":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/performance.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/quoteAttributeValueForBrowser.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30859,7 +31060,7 @@ function quoteAttributeValueForBrowser(value) {
 
 module.exports = quoteAttributeValueForBrowser;
 
-},{"./escapeTextContentForBrowser":"/Users/9dots/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/setInnerHTML.js":[function(require,module,exports){
+},{"./escapeTextContentForBrowser":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/setInnerHTML.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30948,7 +31149,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setInnerHTML;
 
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/setTextContent.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/setTextContent.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30990,7 +31191,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setTextContent;
 
-},{"./ExecutionEnvironment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./escapeTextContentForBrowser":"/Users/9dots/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js","./setInnerHTML":"/Users/9dots/Repositories/react-test/node_modules/react/lib/setInnerHTML.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/shallowEqual.js":[function(require,module,exports){
+},{"./ExecutionEnvironment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ExecutionEnvironment.js","./escapeTextContentForBrowser":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/escapeTextContentForBrowser.js","./setInnerHTML":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/setInnerHTML.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/shallowEqual.js":[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31034,7 +31235,7 @@ function shallowEqual(objA, objB) {
 
 module.exports = shallowEqual;
 
-},{}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/shouldUpdateReactComponent.js":[function(require,module,exports){
+},{}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/shouldUpdateReactComponent.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31138,7 +31339,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 module.exports = shouldUpdateReactComponent;
 
 }).call(this,require('_process'))
-},{"./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/toArray.js":[function(require,module,exports){
+},{"./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/toArray.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -31210,7 +31411,7 @@ function toArray(obj) {
 module.exports = toArray;
 
 }).call(this,require('_process'))
-},{"./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/traverseAllChildren.js":[function(require,module,exports){
+},{"./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/traverseAllChildren.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31463,7 +31664,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 module.exports = traverseAllChildren;
 
 }).call(this,require('_process'))
-},{"./ReactElement":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactFragment.js","./ReactInstanceHandles":"/Users/9dots/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./getIteratorFn":"/Users/9dots/Repositories/react-test/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/9dots/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/lib/warning.js":[function(require,module,exports){
+},{"./ReactElement":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactElement.js","./ReactFragment":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactFragment.js","./ReactInstanceHandles":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/ReactInstanceHandles.js","./getIteratorFn":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/getIteratorFn.js","./invariant":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/invariant.js","./warning":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/warning.js":[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -31526,9 +31727,9 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = warning;
 
 }).call(this,require('_process'))
-},{"./emptyFunction":"/Users/9dots/Repositories/react-test/node_modules/react/lib/emptyFunction.js","_process":"/Users/9dots/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/9dots/Repositories/react-test/node_modules/react/react.js":[function(require,module,exports){
+},{"./emptyFunction":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/emptyFunction.js","_process":"/Users/danielleavitt/Repositories/react-test/node_modules/gulp-browserify-bundle-task/node_modules/browserify/node_modules/process/browser.js"}],"/Users/danielleavitt/Repositories/react-test/node_modules/react/react.js":[function(require,module,exports){
 module.exports = require('./lib/React');
 
-},{"./lib/React":"/Users/9dots/Repositories/react-test/node_modules/react/lib/React.js"}]},{},["./lib/main.js"]);
+},{"./lib/React":"/Users/danielleavitt/Repositories/react-test/node_modules/react/lib/React.js"}]},{},["./lib/main.js"]);
 
 //# sourceMappingURL=build.js.map

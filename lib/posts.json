@@ -11,34 +11,17 @@
                 "likes": 41
             },
             {
-                "author": "Jacob",
-                "text": "I love this website Daniel!",
-                "likes": 11
-            },
-            {
                 "author": "Joseph",
                 "text": "I love doing my homework!",
                 "likes": 1
             },
             {
-                "author": "blah",
-                "text": "123",
-                "likes": 2
-            },
-            {
-                "author": "aaa",
-                "text": "bbb"
-            },
-            {
-                "author": "aat",
-                "text": "bcc"
-            },
-            {
-                "author": "cc",
-                "text": "ff"
+                "author": "f45",
+                "text": "A23"
             }
         ],
-        "likes": 3
+        "likes": 3,
+        "length": 0
     },
     {
         "_id": "100000100002",
@@ -47,17 +30,16 @@
         "content": "Writing a whole lot of content",
         "comments": [
             {
-                "author": "Daniel",
-                "text": "Is writing code",
-                "likes": 4
+                "author": "eee",
+                "text": "1234"
             },
             {
-                "author": "23",
-                "text": "14"
+                "author": "TTTT",
+                "text": "VVVV"
             },
             {
-                "author": "bb",
-                "text": "23"
+                "author": "uyg",
+                "text": "gf"
             }
         ],
         "likes": 1

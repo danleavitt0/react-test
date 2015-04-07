@@ -2,12 +2,34 @@
     var app = express();
     var server = require('http').createServer(app);
     var io = require('socket.io')(server);
+    var mongoose = require('mongoose');
     var morgan = require('morgan');
     var bodyParser = require('body-parser');
     var methodOverride = require('method-override');
     var request = require('request');
     var fs = require('fs');
-    var _ = require('lodash')
+    var _ = require('lodash');
+
+    mongoose.connect('mongodb://localhost/test');
+    var db = mongoose.connection;
+    var Schema = mongoose.Schema;
+
+    var postSchema = new Schema({
+      title:  String,
+      author: String,
+      body:   String,
+      comments: [{ author:String, body: String, date: Date }],
+      date: { type: Date, default: Date.now },
+      hidden: Boolean,
+      meta: {
+        likes: Number
+      }
+    });
+
+    var Posts = mongoose.model('Post', postSchema);
+
+
+    console.log('Starting Up');
 
     // configuration =================
 
@@ -23,6 +45,9 @@
     });
 
     app.get('/posts.json', function(req,res){
+      Posts.find(function(err, posts){
+        console.log(posts);
+      });
       res.sendfile('./lib/' + req.url);
     });
 
@@ -31,36 +56,42 @@
     });
 
     // listen (start app with node server.js) ======================================
-    app.set('port', process.env.PORT || 5000);
+    app.set('port', process.env.PORT || 3000);
 
     io.on('connection', function(socket){
+      socket.on('connect', function(){
+        console.log('connected');
+      })
 
       socket.on('new comment', function(comment){
+        var post = new Posts ({
+          author:comment.author,
+          body:comment.text
+        });
+        console.log(post);
+        post.save();
+        Posts.find(function(err,posts){
+          console.log(posts);
+        })
+      })
+
+      socket.on('remove comment', function(i,id){
         fs.readFile('./lib/posts.json', function(err, data) {
           var posts = JSON.parse(data);
           var idx = _.findIndex(posts, function(post){
-            return post._id === comment._id;
-          })
-          posts[idx].comments.push(_.omit(comment, '_id'));
-          fs.writeFile('./lib/posts.json', JSON.stringify(posts, null, 4), function(err) {
-            io.emit('added comment', posts[idx].comments, comment._id);
+            return post._id === id;
           });
-        });
-      })
-
-      socket.on('remove comment', function(idx){
-        fs.readFile('./lib/posts.json', function(err, data) {
-          var comments = JSON.parse(data);
-          _.pullAt(comments, idx);
-          fs.writeFile('./lib/posts.json', JSON.stringify(comments, null, 4), function(err) {
-            io.emit('added comment', comments);
+          _.pullAt(posts[idx].comments, i);
+          fs.writeFile('./lib/posts.json', JSON.stringify(posts, null, 4), function(err) {
+            io.emit('added comment', posts[idx].comments, id);
           });
         });
       });
 
       socket.on('add like', function(idx){
         fs.readFile('./lib/posts.json', function(err, data) {
-          var comments = JSON.parse(data);
+          var posts = JSON.parse(data);
+          var comments 
           if(comments[idx].likes)
             comments[idx].likes++;
           else
