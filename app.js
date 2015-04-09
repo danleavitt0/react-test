@@ -44,13 +44,6 @@
       res.sendfile('./lib/' + req.url);
     });
 
-    app.get('/posts.json', function(req,res){
-      Posts.find(function(err, posts){
-        console.log(posts);
-      });
-      res.sendfile('./lib/' + req.url);
-    });
-
     app.get('*', function(req, res) {
       res.sendfile('./' + req.url);
     });
@@ -63,15 +56,26 @@
         console.log('connected');
       })
 
-      socket.on('new comment', function(comment){
-        var post = new Posts ({
-          author:comment.author,
-          body:comment.text
-        });
-        console.log(post);
-        post.save();
+      socket.on('retrieve posts', function(){
         Posts.find(function(err,posts){
           console.log(posts);
+          io.emit('post list', posts);
+        })
+      })
+
+      socket.on('new post', function(pendingPost){
+        var post = new Posts (pendingPost);
+        post.save();
+      })
+
+      socket.on('new comment', function(comment, id){
+        var query = Posts.where({ _id:id })
+        query.findOne(function(err, post){
+          if(err) return console.log(err);
+          if(post) {
+            post.comments.push(comment);
+            post.save();
+          }
         })
       })
 

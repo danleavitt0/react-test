@@ -8,7 +8,7 @@ var PostList = React.createClass({
     var postNodes = _.map(this.props.posts, function(post, idx){
       return (
         <div key={idx}>
-          <Post img={post.img} heading={post.header} content={post.content} />
+          <Post img={post.img} heading={post.author} content={post.body} />
           <CommentForm onCommentSubmit={this.props.handleCommentSubmit} _id={post._id}/>
           <CommentBox comments={post.comments} _id={post._id} />
         </div>
@@ -33,6 +33,18 @@ var Post = React.createClass({
   }
 })
 
+var PostForm = React.createClass({
+  handleSubmit: function(post) {
+    io().emit('new post', post);
+    this.props.handleSubmit(post);
+  },
+  render: function(){
+    return(
+      <CommentForm onCommentSubmit={this.handleSubmit}/>
+    );
+  }
+})
+
 var Posts = React.createClass({
   getInitialState: function() {
     return {
@@ -42,24 +54,24 @@ var Posts = React.createClass({
   handleCommentSubmit: function(comment) {
     io().emit('new comment', comment, this.props._id);
   },
+  handlePostSubmit: function(post) {
+    var posts = this.state.data;
+    var newPosts = posts.concat([post]);
+    this.setState({data:newPosts});
+  },
   getDataFromServer: function(){
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
+    io().emit('retrieve posts')
   },
   componentDidMount: function() {
     this.getDataFromServer();
+    io().on('post list', function(data){
+      this.setState({data:data});
+    }.bind(this))
   },
   render: function() {
     return (
-      <div className="commentBox">
+      <div className="postBox">
+        <PostForm handleSubmit={this.handlePostSubmit} />
         <PostList posts={this.state.data} handleCommentSubmit={this.handleCommentSubmit} />
       </div>
     );
